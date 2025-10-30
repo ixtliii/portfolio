@@ -1,0 +1,208 @@
+---
+import Animation from "./Animation.astro"
+---
+<style>
+    .golden-about path{
+        opacity: 0;
+    }
+    section{
+        #about-heading{
+            color: var(--c-primary);
+            display: flex;
+            .artem, .diakunchak{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                span{
+                    font-size: 2rem;
+                    font-weight: 700;
+                    line-height: 130%;
+                }
+            }
+
+        }
+
+
+        p{
+            color: var(--c-mid);
+            letter-spacing: 0.16px;
+            span{
+                font-weight: 500;
+                color: var(--c-primary);
+            }
+        }
+        .contact-wrapper{
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+
+            h3{
+                color: var(--c-primary);
+                font-style: normal;
+                font-weight: 500;
+                letter-spacing: 0.54px;
+            }
+            p{
+                span{
+                    a{
+                        font-weight: 500;
+                        color: var(--c-primary);
+                        text-decoration-line: underline;
+                        text-decoration-style: solid;
+                        text-decoration-skip-ink: auto;
+                        text-decoration-thickness: auto;
+                        text-underline-offset: auto;
+                        text-underline-position: from-font;
+                    }
+                }
+            }
+        }
+    }
+    @media screen and (width <= 30em){
+        section{
+            margin-top: 5vh;
+            height: 90vh;
+            .golden-about{
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: -1;
+            }
+
+            #about-heading{
+                color: var(--c-primary);
+                display: flex;
+                grid-column: 1 / span 5;
+                grid-row: 1 / span 1;
+                gap: 1.5rem;
+                padding: 0;
+                margin: 0;
+                height: 0;
+
+                .artem, .diakunchak{
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    padding: 0;
+                    margin: 0;
+                    row-gap: 0;
+                    span{
+                        font-size: 2rem;
+                        font-weight: 700;
+                        line-height: 130%;
+                    }
+                }
+
+            }
+
+            .about-wrapper{
+                display: flex;
+                flex-direction: column;
+                grid-column: 6 / span 7;
+                gap: 2rem;
+                img{
+                    width: 100%;
+                    height: 25%;
+                    border-radius: 12px;
+                    object-fit: cover;
+                }
+            }
+
+            .contact-wrapper{
+                grid-row: 5;
+                grid-column: 1 / span 10;
+                h3{
+                    color: var(--c-primary);
+                    font-size: 1.2rem;
+                }
+
+                p{
+                    line-height: 160%;
+                };
+            }
+
+        }
+
+    }
+</style>
+
+<section id="about-section">
+    <svg class="golden-about" width="397" height="759" viewBox="0 0 397 759" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g opacity="0.1">
+            <path d="M1.33291 757.379C105.762 757.379 205.914 708.151 279.757 620.523C353.6 532.896 395.084 414.048 395.084 290.124" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M151.724 1.33398C216.267 1.33399 278.167 31.7599 323.806 85.9185C369.444 140.077 395.084 213.532 395.084 290.124" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M1.33301 179.799C1.33301 132.467 17.1777 87.0735 45.3814 53.6048C73.5852 20.136 111.838 1.3335 151.724 1.3335" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M94.3027 290.123C69.6459 290.123 45.9989 278.5 28.5639 257.81C11.1289 237.12 1.33398 209.059 1.33398 179.799" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M94.3019 290.123C109.531 290.123 124.137 282.944 134.905 270.165C145.674 257.386 151.724 240.054 151.724 221.982" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M116.177 179.8C120.845 179.8 125.467 180.891 129.78 183.011C134.093 185.131 138.011 188.238 141.312 192.155C144.613 196.072 147.231 200.722 149.018 205.84C150.804 210.957 151.724 216.443 151.724 221.982" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M116.177 179.8C113.305 179.8 110.46 180.471 107.806 181.775C105.152 183.08 102.741 184.992 100.71 187.403C98.6784 189.813 97.0672 192.675 95.9678 195.824C94.8685 198.973 94.3027 202.349 94.3027 205.758" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M107.974 221.982C106.179 221.982 104.401 221.562 102.742 220.747C101.084 219.932 99.5766 218.737 98.307 217.23C97.0375 215.724 96.0305 213.935 95.3434 211.967C94.6564 209.998 94.3027 207.889 94.3027 205.758" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M107.974 221.981C110.149 221.981 112.236 220.956 113.774 219.13C115.313 217.305 116.177 214.829 116.177 212.247" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M107.974 212.247H116.177" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M107.975 205.758V221.982" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M110.709 212.248V205.758" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M110.708 209.002H107.974" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M116.178 205.758H94.3027" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M116.178 221.982V179.8" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M94.3015 221.982H151.724" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M94.3027 179.799V290.124" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M151.724 179.799H1.3325" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M151.862 290.124L151.862 1.16961" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M1.33263 290.123H395.084" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M1.33177 757.379H395.445" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M1.69396 1.33325L395.445 1.33325" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M395.445 757.38L395.445 0.904302" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M1.33301 757.38L1.33301 0.904302" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M110.708 205.759C112.159 205.759 113.55 206.442 114.575 207.659C115.601 208.876 116.177 210.527 116.177 212.248" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M110.709 205.758C110.35 205.758 109.994 205.842 109.662 206.005C109.331 206.168 109.029 206.407 108.775 206.708C108.522 207.01 108.32 207.367 108.183 207.761C108.045 208.154 107.975 208.576 107.975 209.002" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M110.713 212.241C110.353 212.241 109.998 212.158 109.666 211.994C109.335 211.831 109.033 211.592 108.779 211.291C108.525 210.99 108.324 210.632 108.187 210.239C108.049 209.845 107.979 209.423 107.979 208.997" stroke="#FBFBFB" stroke-width="2.66667"/>
+        </g>
+    </svg>
+    <div id="about-heading">
+        <div class="artem">
+            <span>A</span>
+            <span>R</span>
+            <span>T</span>
+            <span>E</span>
+            <span>M</span>
+        </div>
+        <div class="diakunchak">
+            <span>D</span>
+            <span>I</span>
+            <span>A</span>
+            <span>K</span>
+            <span>U</span>
+            <span>N</span>
+            <span>C</span>
+            <span>H</span>
+            <span>A</span>
+            <span>K</span>
+        </div>
+    </div>
+    <div class="about-wrapper">
+        <p class="about-text">
+            UX/UI Designer with <span>1 year of experience</span>, who loves a good challenge.
+            Based in <span>West Flanders, Belgium</span> (yes, the one with the great beer and cycling),
+            I spend my days focusing on the stuff that truly matters: my beloved plants,
+            and digging into user research to find out what people really need.
+        </p>
+        <img src="/img/Artem.png" alt="a guy with pale skin and blonde hair in a sweater sitting on a chair in school,
+    dim warm lighting, yellow halftones">
+    </div>
+    <div class="contact-wrapper">
+        <h3>CONTACT</h3>
+        <p>
+            I’m most active and reachable via <span><a href="#">email</a></span>
+            You can also check out my <span><a href="#">resume</a></span>, if you’re into that sort of thing.
+        </p>
+    </div>
+</section>
+<Animation
+        sectionSelector="#about-section"
+        goldenSelector=".golden-about path"
+        headingSelector="#about-heading"
+        headingAnimation="scramble"
+/>

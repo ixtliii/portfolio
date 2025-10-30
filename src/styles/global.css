@@ -25,21 +25,19 @@ img {
     --s_2: .2rem;
     --s_1: .5rem;
     --s1: 1rem;
-    --s2: 1.2rem;
+    --s2: 1.3rem;
     --s3: 1.5rem;
     --s4: 2rem;
 
     --fs-s: .8rem;
-    --fs-m: 1rem;
+    --fs-body: 1rem;
     --fs-l: 1.5rem;
-    --fs-xl: 2rem;
-
-    --c-bg1: #8EC5FC;
-    --c-bg2: #E0C3FC;
+    --fs-h1: 4rem;
 
     --c-dark: #171719;
-    --c-mid: #757575;
-    --c-primary: #ff3f40;
+    --c-mid: #BEBEBE;
+    --c-bg-white:#F2F2F2;
+    --c-primary: #FBFBFB;
 
     --border-radius: .25rem;
     --border-radius-xl: 1rem;
@@ -70,3 +68,10 @@ body {
     font-family: 'Satoshi', sans-serif;
 }
 
+section{
+    display: grid;
+    position: relative;
+    padding: var(--s2);
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+}

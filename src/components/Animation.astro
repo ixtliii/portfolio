@@ -1,0 +1,299 @@
+---
+export interface Props {
+    sectionSelector: string;
+    goldenSelector?: string;
+    headingSelector?: string;
+    headingAnimation?: 'chars' | 'fade' | 'slide' | 'scramble';
+}
+
+const {
+    sectionSelector,
+    goldenSelector = '.golden path',
+    headingSelector,
+    headingAnimation = 'chars'
+} = Astro.props;
+---
+
+<div
+        id="animation-data-injector"
+        data-section-selector={sectionSelector}
+        data-golden-selector={goldenSelector}
+        data-heading-selector={headingSelector}
+        data-heading-animation={headingAnimation}
+></div>
+
+<script>
+    import { gsap } from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+    if (typeof window !== 'undefined') {
+        gsap.registerPlugin(ScrollTrigger);
+    }
+
+    // Enhanced scramble text function for span structures
+    function scrambleTextElement(element, duration = 2, revealDuration = 0.5) {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+        // Get all span elements
+        const spans = element.querySelectorAll('span');
+        const originalTexts = Array.from(spans).map(span => span.textContent);
+
+        let scrambleIterations = 0;
+        const totalIterations = Math.floor(duration * 10); // 10 iterations per second
+
+        const scrambleInterval = setInterval(() => {
+            spans.forEach((span, index) => {
+                const originalChar = originalTexts[index];
+
+                // Gradually reveal more correct characters as we progress
+                const revealProgress = scrambleIterations / totalIterations;
+                const shouldReveal = Math.random() < (revealProgress * 1.5); // Speed up revelation
+
+                if (shouldReveal && scrambleIterations > totalIterations * 0.3) {
+                    span.textContent = originalChar;
+                } else {
+                    span.textContent = chars[Math.floor(Math.random() * chars.length)];
+                }
+            });
+
+            scrambleIterations++;
+
+            // Stop scrambling and reveal final text
+            if (scrambleIterations >= totalIterations) {
+                clearInterval(scrambleInterval);
+
+                // Final reveal animation - restore all original characters
+                spans.forEach((span, index) => {
+                    span.textContent = originalTexts[index];
+                });
+
+                // Add a subtle scale animation for the final reveal
+                gsap.fromTo(spans, {
+                    scale: 1.2,
+                    opacity: 0.8
+                }, {
+                    scale: 1,
+                    opacity: 1,
+                    duration: revealDuration,
+                    ease: "back.out(1.7)",
+                    stagger: {
+                        each: 0.03,
+                        from: "start"
+                    }
+                });
+            }
+        }, 100); // Update every 100ms
+    }
+
+    function initializeAnimations() {
+        const injectors = document.querySelectorAll('#animation-data-injector');
+
+        injectors.forEach((injector) => {
+            const SECTION_SELECTOR = injector.dataset.sectionSelector;
+            const GOLDEN_SELECTOR = injector.dataset.goldenSelector;
+            const HEADING_SELECTOR = injector.dataset.headingSelector;
+            const HEADING_ANIMATION = injector.dataset.headingAnimation;
+
+            const section = document.querySelector(SECTION_SELECTOR);
+            if (!section) {
+                console.warn('Section not found:', SECTION_SELECTOR);
+                return;
+            }
+
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: section,
+                    start: 'top 70%', // When top of section hits 70% down viewport
+                    end: 'bottom top',
+                    toggleActions: 'play none none reverse',
+                    markers: false, // Set to true for debugging
+                }
+            });
+
+            // Handle scramble animation FIRST if it exists
+            if (HEADING_SELECTOR && HEADING_ANIMATION === 'scramble') {
+                const heading = section.querySelector(HEADING_SELECTOR);
+
+                if (heading && !heading.classList.contains('animation-processed')) {
+                    heading.classList.add('animation-processed');
+
+                    // For span-based structures like your example
+                    const textContainers = heading.querySelectorAll('div, h1, h2, h3, h4, h5, h6');
+
+                    if (textContainers.length > 0) {
+                        // If we have container elements with spans
+                        gsap.set(heading, { opacity: 1 });
+
+                        // Add scramble animation at the VERY BEGINNING of timeline
+                        tl.add(() => {
+                            textContainers.forEach(container => {
+                                if (container.querySelectorAll('span').length > 0) {
+                                    scrambleTextElement(container, 2, 0.8);
+                                }
+                            });
+                        }, 0); // Position 0 - very start of timeline
+
+                    } else {
+                        // Fallback for regular text content
+                        const originalContent = heading.innerHTML;
+                        const wrapper = document.createElement('div');
+                        wrapper.innerHTML = originalContent;
+                        heading.innerHTML = '';
+                        heading.appendChild(wrapper);
+
+                        const textNodes = [];
+
+                        function getTextNodes(node) {
+                            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                                textNodes.push(node);
+                            } else {
+                                for (const child of node.childNodes) {
+                                    getTextNodes(child);
+                                }
+                            }
+                        }
+
+                        getTextNodes(wrapper);
+
+                        gsap.set(wrapper, { opacity: 1 });
+
+
+                        tl.add(() => {
+                            textNodes.forEach(node => {
+                                // Use the original scramble function for text nodes
+                                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+                                const originalText = node.textContent;
+                                let scrambleIterations = 0;
+                                const totalIterations = 20;
+
+                                const scrambleInterval = setInterval(() => {
+                                    let scrambledText = '';
+
+                                    for (let i = 0; i < originalText.length; i++) {
+                                        if (originalText[i] === ' ') {
+                                            scrambledText += ' ';
+                                        } else {
+                                            const revealProgress = scrambleIterations / totalIterations;
+                                            const shouldReveal = Math.random() < (revealProgress * 1.5);
+
+                                            if (shouldReveal && scrambleIterations > totalIterations * 0.3) {
+                                                scrambledText += originalText[i];
+                                            } else {
+                                                scrambledText += chars[Math.floor(Math.random() * chars.length)];
+                                            }
+                                        }
+                                    }
+
+                                    node.textContent = scrambledText;
+                                    scrambleIterations++;
+
+                                    if (scrambleIterations >= totalIterations) {
+                                        clearInterval(scrambleInterval);
+                                        gsap.to(node, {
+                                            innerHTML: originalText,
+                                            duration: 0.8,
+                                            ease: "power2.out"
+                                        });
+                                    }
+                                }, 100);
+                            });
+                        }, 0);
+                    }
+                }
+            }
+
+            if (GOLDEN_SELECTOR) {
+                const paths = section.querySelectorAll(GOLDEN_SELECTOR);
+                if (paths.length > 0) {
+                    gsap.set(paths, {
+                        strokeDasharray: '1000',
+                        strokeDashoffset: '1000',
+                        opacity: 1
+                    });
+
+                    tl.to(paths, {
+                        strokeDashoffset: 0,
+                        opacity: 0.6,
+                        duration: 2,
+                        ease: "power2.inOut",
+                        stagger: {
+                            amount: 1.5,
+                            from: "random"
+                        }
+                    }, "+=0.5");
+                }
+            }
+
+            if (HEADING_SELECTOR && HEADING_ANIMATION && HEADING_ANIMATION !== 'scramble') {
+                const heading = section.querySelector(HEADING_SELECTOR);
+
+                if (heading) {
+                    const originalHTML = heading.innerHTML;
+
+                    if (!heading.classList.contains('animation-processed')) {
+                        heading.classList.add('animation-processed');
+
+                        if (HEADING_ANIMATION === 'chars') {
+                            const cleanedHTML = originalHTML.replace(/<br>\s+/g, '<br>');
+                            let newHTML = '';
+                            let inTag = false;
+                            let currentTag = '';
+
+                            for (let i = 0; i < cleanedHTML.length; i++) {
+                                const char = cleanedHTML[i];
+                                if (char === '<') {
+                                    inTag = true;
+                                    currentTag = char;
+                                } else if (char === '>') {
+                                    currentTag += char;
+                                    inTag = false;
+                                    if (currentTag.toLowerCase() === '<br>') {
+                                        newHTML += '<br>';
+                                    } else {
+                                        newHTML += currentTag;
+                                    }
+                                    currentTag = '';
+                                } else if (inTag) {
+                                    currentTag += char;
+                                } else {
+                                    if (char === ' ') {
+                                        newHTML += '<span class="char">&nbsp;</span>';
+                                    } else {
+                                        newHTML += `<span class="char">${char}</span>`;
+                                    }
+                                }
+                            }
+                            heading.innerHTML = newHTML;
+
+                            gsap.set(heading.querySelectorAll('.char'), {
+                                y: 100,
+                                opacity: 0
+                            });
+
+                            tl.to(heading.querySelectorAll('.char'), {
+                                y: 0,
+                                opacity: 1,
+                                duration: 1.2,
+                                ease: "elastic.out(1, 0.5)",
+                                stagger: {
+                                    each: 0.05,
+                                    from: "start"
+                                }
+                            }, "<");
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeAnimations);
+    } else {
+        initializeAnimations();
+    }
+
+    window.addEventListener('resize', () => {
+        ScrollTrigger.refresh();
+    });
+</script>

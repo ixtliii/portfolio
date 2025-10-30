@@ -1,24 +1,45 @@
 ---
-import EyeButton from "./EyeButton.astro"
+import EyeButton from "./EyeButton.astro";
+import Animation from './Animation.astro';
 ---
 
 <style>
+    section{
+        background-color: var(--c-bg-white);
+        height: 90vh;
+        border-radius: 0 0 44px 44px;
+        background-image:
+                radial-gradient(circle,
+                #ffffff 1px,
+                rgba(255, 255, 255, 0) 1px
+                );
+        background-size: 10px 10px;
+
+        h1{
+            font-family: 'Satoshi', sans-serif;
+            font-style: normal;
+            font-weight: 900;
+            line-height: 100%;
+            letter-spacing: 0.12rem;
+            color: var(--c-dark);
+            align-self: end;
+        }
+        h1 .char {
+            display: inline-block;
+        }
+
+        .golden path {
+            opacity: 0;
+        }
+        .name-text{
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            letter-spacing: 0.01rem;
+        }
+    }
     @media screen and (width <= 30em){
         section{
-            background-color: #F2F2F2;
-            height: 90vh;
-            border-radius: 0 0 44px 44px;
-            background-image:
-                    radial-gradient(circle,
-                    #ffffff 1px,
-                    rgba(255, 255, 255, 0) 1px
-                    );
-            background-size: 10px 10px;
-            display: grid;
-            position: relative;
-            padding: 1.3rem;
-            grid-template-columns: repeat(12, 1fr);
-            grid-template-rows: repeat(10, 1fr);
 
             .golden{
                 height: 100%;
@@ -28,30 +49,16 @@ import EyeButton from "./EyeButton.astro"
                 left: 0;
             }
             h1{
-                font-family: 'Satoshi', sans-serif;
-                font-size: 4rem;
-                font-style: normal;
-                font-weight: 900;
-                line-height: 100%;
-                letter-spacing: 0.12rem;
-                color: var(--c-dark);
+                font-size: var(--fs-h1);
                 grid-column: 1 / span 12;
                 grid-row: 8 / span 3;
-
                 align-self: end;
-            }
-            h1 .char {
-                display: inline-block;
             }
 
             .name-text{
                 grid-column: 1 / span 1;
                 grid-row: 2 / span 3;
-                font-size: 1rem;
-                font-style: normal;
-                font-weight: 400;
-                line-height: normal;
-                letter-spacing: 0.01rem;
+                font-size: var(--fs-body);
                 writing-mode: vertical-rl;
                 text-orientation: mixed;
                 justify-self: start;
@@ -68,7 +75,7 @@ import EyeButton from "./EyeButton.astro"
     }
 </style>
 
-<section>
+<section id="hero-section">
     <svg class="golden" width="393" height="745" viewBox="0 0 393 745" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g opacity="0.1">
             <path d="M394 0.000488281C289.601 0.000493219 189.477 48.4823 115.656 134.78C41.8347 221.079 0.362303 338.124 0.362305 460.168" stroke="#3B3B3B" stroke-width="2.66667"/>
@@ -105,80 +112,9 @@ import EyeButton from "./EyeButton.astro"
     </h1>
     <EyeButton />
 </section>
-
-<script>
-    import { gsap } from 'gsap';
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const paths = document.querySelectorAll('.golden path');
-
-        gsap.set(paths, {
-            strokeDasharray: '1000',
-            strokeDashoffset: '1000',
-            opacity: 1
-        });
-
-        const tl = gsap.timeline();
-
-        tl.to(paths, {
-            strokeDashoffset: 0,
-            opacity: .6,
-            duration: 2,
-            ease: "power2.inOut",
-            stagger: {
-                amount: 1.5,
-                from: "random"
-            }
-        });
-
-        const heading = document.getElementById('animated-heading');
-        const originalHTML = heading.innerHTML;
-
-        const cleanedHTML = originalHTML.replace(/<br>\s+/g, '<br>');
-
-        let newHTML = '';
-        let inTag = false;
-        let currentTag = '';
-
-        for (let i = 0; i < cleanedHTML.length; i++) {
-            const char = cleanedHTML[i];
-
-            if (char === '<') {
-                inTag = true;
-                currentTag = char;
-            } else if (char === '>') {
-                currentTag += char;
-                inTag = false;
-
-                if (currentTag.toLowerCase() === '<br>') {
-                    newHTML += '<br>';
-                } else {
-                    newHTML += currentTag;
-                }
-
-                currentTag = '';
-            } else if (inTag) {
-                currentTag += char;
-            } else {
-                if (char === ' ') {
-                    newHTML += '<span class="char">&nbsp;</span>';
-                } else {
-                    newHTML += `<span class="char">${char}</span>`;
-                }
-            }
-        }
-
-        heading.innerHTML = newHTML;
-
-        tl.from(heading.querySelectorAll('.char'), {
-            y: 100,
-            opacity: 0,
-            duration: 1.2,
-            ease: "elastic.out(1, 0.5)",
-            stagger: {
-                each: 0.05,
-                from: "start"
-            }
-        }, "-=1.5");
-    });
-</script>
+<Animation
+        sectionSelector="#hero-section"
+        goldenSelector=".golden path"
+        headingSelector="h1"
+        headingAnimation="chars"
+/>
