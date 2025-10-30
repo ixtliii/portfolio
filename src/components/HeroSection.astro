@@ -16,11 +16,11 @@ import EyeButton from "./EyeButton.astro"
             background-size: 10px 10px;
             display: grid;
             position: relative;
-            padding: 1.4rem;
+            padding: 1.3rem;
             grid-template-columns: repeat(12, 1fr);
             grid-template-rows: repeat(10, 1fr);
 
-            .white-dot{
+            .golden{
                 height: 100%;
                 width: 100%;
                 position: absolute;
@@ -46,7 +46,7 @@ import EyeButton from "./EyeButton.astro"
 
             .name-text{
                 grid-column: 1 / span 1;
-                grid-row: 1 / span 3;
+                grid-row: 2 / span 3;
                 font-size: 1rem;
                 font-style: normal;
                 font-weight: 400;
@@ -59,10 +59,17 @@ import EyeButton from "./EyeButton.astro"
         }
 
     }
+    @media screen and (width <= 24em){
+        section{
+            h1{
+                font-size: 3rem;
+            }
+        }
+    }
 </style>
 
 <section>
-    <svg class="white-dot" width="393" height="745" viewBox="0 0 393 745" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg class="golden" width="393" height="745" viewBox="0 0 393 745" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g opacity="0.1">
             <path d="M394 0.000488281C289.601 0.000493219 189.477 48.4823 115.656 134.78C41.8347 221.079 0.362303 338.124 0.362305 460.168" stroke="#3B3B3B" stroke-width="2.66667"/>
             <path d="M243.652 744.577C179.128 744.577 117.246 714.613 71.6202 661.275C25.9945 607.938 0.362303 535.598 0.362305 460.168" stroke="#3B3B3B" stroke-width="2.66667"/>
@@ -94,7 +101,7 @@ import EyeButton from "./EyeButton.astro"
 
     <div class="name-text">Artem Diakunchak</div>
     <h1 id="animated-heading">
-        UX/UI <br>DESIGNER
+        UX/UI<br>DESIGNER
     </h1>
     <EyeButton />
 </section>
@@ -103,7 +110,7 @@ import EyeButton from "./EyeButton.astro"
     import { gsap } from 'gsap';
 
     document.addEventListener('DOMContentLoaded', function() {
-        const paths = document.querySelectorAll('.white-dot path');
+        const paths = document.querySelectorAll('.golden path');
 
         gsap.set(paths, {
             strokeDasharray: '1000',
