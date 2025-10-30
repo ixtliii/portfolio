@@ -6,7 +6,8 @@
         position: relative;
         cursor: pointer;
         transition: transform 0.3s ease;
-
+        width: 200%;
+        height: 20%;
         &:hover {
             transform: scale(1.05);
         }
@@ -87,10 +88,6 @@
         animation: lookAround 12s ease-in-out infinite;
     }
 
-    .wrapper:hover .eyelid {
-        opacity: 1;
-        transform: scaleY(0.4);
-    }
 
     .wrapper:hover .circular-text {
         transform: translate(-50%, -50%) rotate(360deg);
@@ -100,8 +97,6 @@
         .wrapper{
             grid-column: 10;
             grid-row: 8;
-            margin-top: -4rem;
-            margin-right: -1rem;
         }
     }
 </style>
