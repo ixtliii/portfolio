@@ -69,9 +69,22 @@ body {
 }
 
 section{
-    display: grid;
     position: relative;
     padding: var(--s2);
+    height: 90vh;
+}
+
+.white-bg{
+    background-color: var(--c-bg-white);
+    background-image:
+            radial-gradient(circle,
+            #ffffff 1px,
+            rgba(255, 255, 255, 0) 1px
+            );
+    background-size: 10px 10px;
+}
+.grid{
+    display: grid;
     grid-template-columns: repeat(12, 1fr);
     grid-template-rows: repeat(10, 1fr);
 }

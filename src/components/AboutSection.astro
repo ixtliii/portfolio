@@ -103,11 +103,9 @@ import Animation from "./Animation.astro"
                 flex-direction: column;
                 grid-column: 6 / span 7;
                 gap: 2rem;
+                height: min-content;
                 img{
-                    width: 100%;
-                    height: 25%;
                     border-radius: 12px;
-                    object-fit: cover;
                 }
             }
 
@@ -129,7 +127,7 @@ import Animation from "./Animation.astro"
     }
 </style>
 
-<section id="about-section">
+<section class="grid" id="about-section">
     <svg class="golden-about" width="397" height="759" viewBox="0 0 397 759" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g opacity="0.1">
             <path d="M1.33291 757.379C105.762 757.379 205.914 708.151 279.757 620.523C353.6 532.896 395.084 414.048 395.084 290.124" stroke="#FBFBFB" stroke-width="2.66667"/>
@@ -161,6 +159,7 @@ import Animation from "./Animation.astro"
             <path d="M110.713 212.241C110.353 212.241 109.998 212.158 109.666 211.994C109.335 211.831 109.033 211.592 108.779 211.291C108.525 210.99 108.324 210.632 108.187 210.239C108.049 209.845 107.979 209.423 107.979 208.997" stroke="#FBFBFB" stroke-width="2.66667"/>
         </g>
     </svg>
+    <h2 class="visually-hidden">ABOUT SECTION</h2>
     <div id="about-heading">
         <div class="artem">
             <span>A</span>

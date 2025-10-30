@@ -30,24 +30,21 @@ const {
         gsap.registerPlugin(ScrollTrigger);
     }
 
-    // Enhanced scramble text function for span structures
     function scrambleTextElement(element, duration = 2, revealDuration = 0.5) {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
 
-        // Get all span elements
         const spans = element.querySelectorAll('span');
         const originalTexts = Array.from(spans).map(span => span.textContent);
 
         let scrambleIterations = 0;
-        const totalIterations = Math.floor(duration * 10); // 10 iterations per second
+        const totalIterations = Math.floor(duration * 10);
 
         const scrambleInterval = setInterval(() => {
             spans.forEach((span, index) => {
                 const originalChar = originalTexts[index];
 
-                // Gradually reveal more correct characters as we progress
                 const revealProgress = scrambleIterations / totalIterations;
-                const shouldReveal = Math.random() < (revealProgress * 1.5); // Speed up revelation
+                const shouldReveal = Math.random() < (revealProgress * 1.5);
 
                 if (shouldReveal && scrambleIterations > totalIterations * 0.3) {
                     span.textContent = originalChar;
@@ -58,16 +55,13 @@ const {
 
             scrambleIterations++;
 
-            // Stop scrambling and reveal final text
             if (scrambleIterations >= totalIterations) {
                 clearInterval(scrambleInterval);
 
-                // Final reveal animation - restore all original characters
                 spans.forEach((span, index) => {
                     span.textContent = originalTexts[index];
                 });
 
-                // Add a subtle scale animation for the final reveal
                 gsap.fromTo(spans, {
                     scale: 1.2,
                     opacity: 0.8
@@ -82,7 +76,7 @@ const {
                     }
                 });
             }
-        }, 100); // Update every 100ms
+        }, 100);
     }
 
     function initializeAnimations() {
@@ -103,38 +97,33 @@ const {
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: section,
-                    start: 'top 70%', // When top of section hits 70% down viewport
+                    start: 'top 70%',
                     end: 'bottom top',
                     toggleActions: 'play none none reverse',
-                    markers: false, // Set to true for debugging
+                    markers: false,
                 }
             });
 
-            // Handle scramble animation FIRST if it exists
             if (HEADING_SELECTOR && HEADING_ANIMATION === 'scramble') {
                 const heading = section.querySelector(HEADING_SELECTOR);
 
                 if (heading && !heading.classList.contains('animation-processed')) {
                     heading.classList.add('animation-processed');
 
-                    // For span-based structures like your example
                     const textContainers = heading.querySelectorAll('div, h1, h2, h3, h4, h5, h6');
 
                     if (textContainers.length > 0) {
-                        // If we have container elements with spans
                         gsap.set(heading, { opacity: 1 });
 
-                        // Add scramble animation at the VERY BEGINNING of timeline
                         tl.add(() => {
                             textContainers.forEach(container => {
                                 if (container.querySelectorAll('span').length > 0) {
                                     scrambleTextElement(container, 2, 0.8);
                                 }
                             });
-                        }, 0); // Position 0 - very start of timeline
+                        }, 0);
 
                     } else {
-                        // Fallback for regular text content
                         const originalContent = heading.innerHTML;
                         const wrapper = document.createElement('div');
                         wrapper.innerHTML = originalContent;
@@ -160,7 +149,6 @@ const {
 
                         tl.add(() => {
                             textNodes.forEach(node => {
-                                // Use the original scramble function for text nodes
                                 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
                                 const originalText = node.textContent;
                                 let scrambleIterations = 0;
@@ -220,7 +208,7 @@ const {
                             amount: 1.5,
                             from: "random"
                         }
-                    }, "+=0.5");
+                    }, "-=0.5");
                 }
             }
 
@@ -279,7 +267,7 @@ const {
                                     each: 0.05,
                                     from: "start"
                                 }
-                            }, "<");
+                            }, "-=1.5");
                         }
                     }
                 }
