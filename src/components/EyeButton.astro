@@ -1,5 +1,4 @@
 ---
-// EyeButton.astro
 ---
 
 <style>
@@ -57,7 +56,6 @@
                 transition: all 0.3s ease-out;
             }
 
-            /* Eyelid for squinting */
             .eyelid {
                 position: absolute;
                 top: 0;
@@ -67,14 +65,13 @@
                 background: url("/img/eyebg.png") lightgray 50% / cover no-repeat;
                 border-radius: 50%;
                 transform-origin: center top;
-                z-index: 1100; /* Higher than pupil */
+                z-index: 1100;
                 transition: transform 0.4s ease;
                 opacity: 0;
             }
         }
     }
 
-    /* More prominent look around animation */
     @keyframes lookAround {
         0% { transform: translate(-50%, -60%); }
         15% { transform: translate(-30%, -70%); }
@@ -90,13 +87,11 @@
         animation: lookAround 12s ease-in-out infinite;
     }
 
-    /* Squint on hover */
     .wrapper:hover .eyelid {
         opacity: 1;
         transform: scaleY(0.4);
     }
 
-    /* Circular text rotation on hover */
     .wrapper:hover .circular-text {
         transform: translate(-50%, -50%) rotate(360deg);
     }
@@ -138,10 +133,8 @@
         const pupil = eyeContainer.querySelector('.pupil');
         const eyelid = eyeContainer.querySelector('.eyelid');
 
-        // Start prominent looking animation
         eyeContainer.classList.add('looking');
 
-        // Enhanced mouse tracking
         eyeContainer.addEventListener('mousemove', (e) => {
             const rect = eyeContainer.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
@@ -150,7 +143,6 @@
             const deltaX = (e.clientX - centerX) / (rect.width / 2);
             const deltaY = (e.clientY - centerY) / (rect.height / 2);
 
-            // More prominent movement
             const maxMove = 8;
             const moveX = deltaX * maxMove;
             const moveY = deltaY * maxMove;
@@ -158,12 +150,10 @@
             pupil.style.transform = `translate(calc(-50% + ${moveX}px), calc(-60% + ${moveY}px))`;
         });
 
-        // Reset pupil position when mouse leaves
         eyeContainer.addEventListener('mouseleave', () => {
             pupil.style.transform = 'translate(-50%, -60%)';
         });
 
-        // Click animation - quick squint
         eyeContainer.addEventListener('click', () => {
             eyelid.style.opacity = '1';
             eyelid.style.transform = 'scaleY(0.2)';
@@ -174,7 +164,6 @@
             }, 200);
         });
 
-        // More frequent and prominent random eye movements
         setInterval(() => {
             if (!eyeContainer.matches(':hover') && Math.random() > 0.5) {
                 const randomX = (Math.random() - 0.5) * 12;
