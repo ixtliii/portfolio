@@ -1,6 +1,9 @@
 ---
+import { getCollection } from "astro:content";
+import ProjectCard from "./ProjectCard.astro";
 
-import Animation from "./Animation.astro";---
+const projects = await getCollection("projects")
+---
 <style>
     section{
         border-radius: 44px;
@@ -17,59 +20,10 @@ import Animation from "./Animation.astro";---
         .cards-container{
             display: flex;
             width: 100%;
-
-            .card{
-                display: flex;
-                border-radius: 24px;
-                background: #FFF;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                position: relative;
-
-                svg{
-                    position: absolute;
-                    top: .5rem;
-                    right: .5rem;
-                }
-
-                .text-container{
-                    display: flex;
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: .5rem;
-                    align-self: stretch;
-
-                    .upper-container{
-                        display: flex;
-                        padding: 0 .5rem;
-                        justify-content: space-between;
-                        align-items: center;
-                        align-self: stretch;
-
-                        .label{
-                            display: flex;
-                            padding: .25rem .5rem;
-                            justify-content: center;
-                            align-items: center;
-                            border-radius: 8px;
-                            background: #EAEAEB;
-                            font-size: .75rem;
-                        }
-                        h3{
-                            font-size: 1.125rem;
-                            font-weight: 700;
-                        }
-                    }
-                    .description-container{
-                        display: flex;
-                        padding: 0 .725rem;
-                        justify-content: space-between;
-                        align-items: center;
-                        align-self: stretch;
-                    }
-                }
-            }
+        }
+        a{
+            text-decoration: none;
+            color: var(--c-dark);
         }
     }
     @media screen and (width <= 30em){
@@ -85,25 +39,6 @@ import Animation from "./Animation.astro";---
                 flex-direction: column;
                 gap: 2rem;
 
-                .card{
-                    gap: 1rem;
-                    align-self: stretch;
-                    padding: .5rem .5rem 1rem .5rem;
-
-                    img{
-                        border-radius:1rem ;
-                    }
-                    .text-container{
-                        .upper-container{
-                            .label{
-
-                            }
-                            h3{
-
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -113,44 +48,13 @@ import Animation from "./Animation.astro";---
         Selected works
     </h2>
     <div class="cards-container">
-        <div class="card">
-            <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M17.7574 26.2425C17.4645 25.9496 17.4645 25.4748 17.7574 25.1819L23.9017 19.0376L19.3484 19.0376C18.9342 19.0376 18.5984 18.7018 18.5984 18.2876C18.5984 17.8734 18.9342 17.5376 19.3484 17.5376L25.7124 17.5376C26.1266 17.5376 26.4624 17.8734 26.4624 18.2876L26.4624 24.6515C26.4624 25.0657 26.1266 25.4015 25.7124 25.4015C25.2982 25.4015 24.9624 25.0657 24.9624 24.6515L24.9624 20.0982L18.8181 26.2425C18.5252 26.5354 18.0503 26.5354 17.7574 26.2425Z" fill="#0F172A"/>
-            </svg>
-
-            <img src="/img/ocare.png" alt="">
-            <div class="text-container">
-                <div class="upper-container">
-                    <h3>Ocare</h3>
-                    <div class="label">
-                        Shipped
-                    </div>
-                </div>
-                <div class="description-container">
-                    <p>Application designed for people with OCD, to help them manage compulsions,
-                        work with their triggers and much more...</p>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M17.7574 26.2425C17.4645 25.9496 17.4645 25.4748 17.7574 25.1819L23.9017 19.0376L19.3484 19.0376C18.9342 19.0376 18.5984 18.7018 18.5984 18.2876C18.5984 17.8734 18.9342 17.5376 19.3484 17.5376L25.7124 17.5376C26.1266 17.5376 26.4624 17.8734 26.4624 18.2876L26.4624 24.6515C26.4624 25.0657 26.1266 25.4015 25.7124 25.4015C25.2982 25.4015 24.9624 25.0657 24.9624 24.6515L24.9624 20.0982L18.8181 26.2425C18.5252 26.5354 18.0503 26.5354 17.7574 26.2425Z" fill="#0F172A"/>
-            </svg>
-
-            <img src="/img/ocare.png" alt="">
-            <div class="text-container">
-                <div class="upper-container">
-                    <h3>Ocare</h3>
-                    <div class="label">
-                        Shipped
-                    </div>
-                </div>
-                <div class="description-container">
-                    <p>Application designed for people with OCD, to help them manage compulsions,
-                        work with their triggers and much more...</p>
-                </div>
-            </div>
-        </div>
+        {
+            projects.map((project) => (
+                        <a href={`/projects/${project.data.id}`}>
+                            <ProjectCard project = {project.data} />
+                        </a>
+            ))
+        }
     </div>
 </section>
 
