@@ -2,10 +2,10 @@
 import "../styles/reset.css";
 import "../styles/global.css";
 import { ViewTransitions } from "astro:transitions";
+import Footer from "../components/Footer.astro";
 
 const { pageTitle } = Astro.props;
 ---
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -19,10 +19,15 @@ const { pageTitle } = Astro.props;
       rel="stylesheet"
   />
 </head>
-
+<style>
+  main{
+    min-height: 90vh;
+  }
+</style>
 <body>
 <main>
   <slot />
 </main>
+<Footer />
 </body>
 </html>

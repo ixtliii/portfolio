@@ -7,42 +7,49 @@ const blogs = await getCollection("blogs")
 ---
 <style>
     section{
-        .button-container{
+        .content-wrapper{
             display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            width: 100%;
-            height: 75%;
             align-items: center;
             justify-content: center;
-
-            a{
+            height: 100%;
+            flex-direction: column;
+            .button-container{
+                display: flex;
+                flex-direction: column;
+                gap: 2rem;
                 width: 100%;
-                text-decoration: none;
+                height: 75%;
+                align-items: center;
+                justify-content: center;
+
+                a{
+                    width: 100%;
+                    text-decoration: none;
+                }
             }
-        }
-        h2{
-            color: var(--c-primary);
-            font-size: 2rem;
-            font-weight: 600;
-            text-align: center;
+            h2{
+                color: var(--c-primary);
+                font-size: 2rem;
+                font-weight: 600;
+                text-align: center;
+            }
         }
     }
     @media screen and (width <= 30em){
         section{
-            height: 90vh;
+            height: 80vh;
             .golden-blog{
                 height: 100%;
                 width: 100%;
                 position: absolute;
-                top: -50px;
+                top: -10px;
                 left: 0;
                 z-index: -1;
             }
+            .content-wrapper{
 
-
+            }
         }
-
     }
 </style>
 <section id="blog-section">
@@ -153,16 +160,17 @@ const blogs = await getCollection("blogs")
             <path d="M283.942 192.112C284.3 192.112 284.654 192.036 284.985 191.888C285.316 191.74 285.616 191.524 285.87 191.251C286.123 190.978 286.323 190.654 286.46 190.297C286.597 189.94 286.668 189.558 286.668 189.172" stroke="#FBFBFB" stroke-width="2"/>
         </g>
     </svg>
-
-    <h2>BLOG</h2>
-    <div class="button-container">
-        {
-            blogs.map((blog) => (
-                    <a href={`/blogs/${blog.data.id}`}>
-                        <BlogButton blog = {blog.data} />
-                    </a>
-            ))
-        }
+    <div class="content-wrapper">
+        <h2>BLOG</h2>
+        <div class="button-container">
+            {
+                blogs.map((blog) => (
+                        <a href={`/blogs/${blog.data.id}`}>
+                            <BlogButton blog = {blog.data} />
+                        </a>
+                ))
+            }
+        </div>
     </div>
 </section>
 <Animation

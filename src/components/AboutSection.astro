@@ -15,7 +15,7 @@ import Animation from "./Animation.astro"
                 align-items: center;
 
                 span{
-                    font-size: 2rem;
+                    font-size: 2.4rem;
                     font-weight: 700;
                     line-height: 130%;
                 }
@@ -102,15 +102,26 @@ import Animation from "./Animation.astro"
                 display: flex;
                 flex-direction: column;
                 grid-column: 6 / span 7;
-                gap: 2rem;
+                gap: 2.5rem;
 
-                img{
-                    border-radius: 12px;
+                .image-container{
+                    width: 100%;
+                    height: 8.5rem;
+                    overflow: hidden;
+                    border-radius: .8rem;
+
+                    img{
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        transform: scale(1.5);
+                        transform-origin: 40% 0%;
+                    }
                 }
             }
 
             .contact-wrapper{
-                grid-row: 9;
+                grid-row: 8;
                 grid-column: 1 / span 10;
                 h3{
                     color: var(--c-primary);
@@ -187,8 +198,10 @@ import Animation from "./Animation.astro"
             I spend my days focusing on the stuff that truly matters: my beloved plants,
             and digging into user research to find out what people really need.
         </p>
-        <!--<img src="/img/Artem.png" alt="a guy with pale skin and blonde hair in a sweater sitting on a chair in school,
-    dim warm lighting, yellow halftones">-->
+        <div class="image-container">
+            <img src="/img/Artem.png" alt="a guy with pale skin and blonde hair in a sweater sitting on a chair in school,
+    dim warm lighting, yellow halftones">
+        </div>
     </div>
     <div class="contact-wrapper">
         <h3>CONTACT</h3>

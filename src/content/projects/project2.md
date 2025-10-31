@@ -1,7 +1,7 @@
 ---
 id: 2
-title: "bib"
-description: "Application designed for people with OCD, to help them manage compulsions,work with their triggers and much more..."
-image: "/img/ocare.png"
-label: "Shipped"
+title: "MarketEcho"
+description: "Web application for traders featuring an analytical dashboard designed to present complex data in a simple manner..."
+image: "/img/project2.png"
+label: "Online"
 ---
