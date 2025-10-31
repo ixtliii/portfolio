@@ -5,18 +5,10 @@ import Animation from './Animation.astro';
 
 <style>
     section{
-        background-color: var(--c-bg-white);
         height: 90vh;
         border-radius: 0 0 44px 44px;
-        background-image:
-                radial-gradient(circle,
-                #ffffff 1px,
-                rgba(255, 255, 255, 0) 1px
-                );
-        background-size: 10px 10px;
 
         h1{
-            font-family: 'Satoshi', sans-serif;
             font-style: normal;
             font-weight: 900;
             line-height: 100%;
@@ -75,7 +67,7 @@ import Animation from './Animation.astro';
     }
 </style>
 
-<section id="hero-section">
+<section class="white-bg grid" id="hero-section">
     <svg class="golden" width="393" height="745" viewBox="0 0 393 745" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g opacity="0.1">
             <path d="M394 0.000488281C289.601 0.000493219 189.477 48.4823 115.656 134.78C41.8347 221.079 0.362303 338.124 0.362305 460.168" stroke="#3B3B3B" stroke-width="2.66667"/>
@@ -105,7 +97,6 @@ import Animation from './Animation.astro';
             <path d="M284.652 536.869C285.01 536.869 285.366 536.951 285.698 537.112C286.029 537.272 286.33 537.508 286.584 537.805C286.838 538.101 287.039 538.453 287.177 538.841C287.314 539.229 287.385 539.644 287.385 540.064" stroke="#3B3B3B" stroke-width="2.66667"/>
         </g>
     </svg>
-
     <div class="name-text">Artem Diakunchak</div>
     <h1 id="animated-heading">
         UX/UI<br>DESIGNER

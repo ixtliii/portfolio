@@ -1,0 +1,87 @@
+---
+const { project } = Astro.props;
+---
+<style>
+    .card{
+        display: flex;
+        border-radius: 24px;
+        background: #FFF;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+
+        svg{
+            position: absolute;
+            top: .5rem;
+            right: .5rem;
+        }
+
+        .text-container{
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: .5rem;
+            align-self: stretch;
+
+            .upper-container{
+                display: flex;
+                padding: 0 .5rem;
+                justify-content: space-between;
+                align-items: center;
+                align-self: stretch;
+
+                .label{
+                    display: flex;
+                    padding: .25rem .5rem;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 8px;
+                    background: #EAEAEB;
+                    font-size: .75rem;
+                }
+                h3{
+                    font-size: 1.25rem;
+                    font-weight: 700;
+                }
+            }
+            .description-container{
+                display: flex;
+                padding: 0 .8rem;
+                justify-content: space-between;
+                align-items: center;
+                align-self: stretch;
+            }
+        }
+    }
+    @media screen and (width <= 30em){
+        .card{
+            gap: 1rem;
+            align-self: stretch;
+            padding: .5rem .5rem 1rem .5rem;
+
+            img{
+                border-radius:1rem ;
+            }
+        }
+    }
+</style>
+
+<div class="card">
+    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M17.7574 26.2425C17.4645 25.9496 17.4645 25.4748 17.7574 25.1819L23.9017 19.0376L19.3484 19.0376C18.9342 19.0376 18.5984 18.7018 18.5984 18.2876C18.5984 17.8734 18.9342 17.5376 19.3484 17.5376L25.7124 17.5376C26.1266 17.5376 26.4624 17.8734 26.4624 18.2876L26.4624 24.6515C26.4624 25.0657 26.1266 25.4015 25.7124 25.4015C25.2982 25.4015 24.9624 25.0657 24.9624 24.6515L24.9624 20.0982L18.8181 26.2425C18.5252 26.5354 18.0503 26.5354 17.7574 26.2425Z" fill="#0F172A"/>
+    </svg>
+
+    <img src={project.image} alt="">
+    <div class="text-container">
+        <div class="upper-container">
+            <h3>{project.title}</h3>
+            <div class="label">
+                {project.label}
+            </div>
+        </div>
+        <div class="description-container">
+            <p>{project.description}</p>
+        </div>
+    </div>
+</div>

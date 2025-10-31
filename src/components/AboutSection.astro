@@ -103,16 +103,14 @@ import Animation from "./Animation.astro"
                 flex-direction: column;
                 grid-column: 6 / span 7;
                 gap: 2rem;
+
                 img{
-                    width: 100%;
-                    height: 25%;
                     border-radius: 12px;
-                    object-fit: cover;
                 }
             }
 
             .contact-wrapper{
-                grid-row: 5;
+                grid-row: 9;
                 grid-column: 1 / span 10;
                 h3{
                     color: var(--c-primary);
@@ -129,38 +127,38 @@ import Animation from "./Animation.astro"
     }
 </style>
 
-<section id="about-section">
-    <svg class="golden-about" width="397" height="759" viewBox="0 0 397 759" fill="none" xmlns="http://www.w3.org/2000/svg">
+<section class="grid" id="about-section">
+    <svg class="golden-about" width="393" height="759" viewBox="0 0 393 759" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g opacity="0.1">
-            <path d="M1.33291 757.379C105.762 757.379 205.914 708.151 279.757 620.523C353.6 532.896 395.084 414.048 395.084 290.124" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M151.724 1.33398C216.267 1.33399 278.167 31.7599 323.806 85.9185C369.444 140.077 395.084 213.532 395.084 290.124" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M1.33301 179.799C1.33301 132.467 17.1777 87.0735 45.3814 53.6048C73.5852 20.136 111.838 1.3335 151.724 1.3335" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M94.3027 290.123C69.6459 290.123 45.9989 278.5 28.5639 257.81C11.1289 237.12 1.33398 209.059 1.33398 179.799" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M94.3019 290.123C109.531 290.123 124.137 282.944 134.905 270.165C145.674 257.386 151.724 240.054 151.724 221.982" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M116.177 179.8C120.845 179.8 125.467 180.891 129.78 183.011C134.093 185.131 138.011 188.238 141.312 192.155C144.613 196.072 147.231 200.722 149.018 205.84C150.804 210.957 151.724 216.443 151.724 221.982" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M116.177 179.8C113.305 179.8 110.46 180.471 107.806 181.775C105.152 183.08 102.741 184.992 100.71 187.403C98.6784 189.813 97.0672 192.675 95.9678 195.824C94.8685 198.973 94.3027 202.349 94.3027 205.758" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M107.974 221.982C106.179 221.982 104.401 221.562 102.742 220.747C101.084 219.932 99.5766 218.737 98.307 217.23C97.0375 215.724 96.0305 213.935 95.3434 211.967C94.6564 209.998 94.3027 207.889 94.3027 205.758" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M107.974 221.981C110.149 221.981 112.236 220.956 113.774 219.13C115.313 217.305 116.177 214.829 116.177 212.247" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M107.974 212.247H116.177" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M107.975 205.758V221.982" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M110.709 212.248V205.758" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M110.708 209.002H107.974" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M116.178 205.758H94.3027" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M116.178 221.982V179.8" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M94.3015 221.982H151.724" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M94.3027 179.799V290.124" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M151.724 179.799H1.3325" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M151.862 290.124L151.862 1.16961" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M1.33263 290.123H395.084" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M1.33177 757.379H395.445" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M1.69396 1.33325L395.445 1.33325" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M395.445 757.38L395.445 0.904302" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M1.33301 757.38L1.33301 0.904302" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M110.708 205.759C112.159 205.759 113.55 206.442 114.575 207.659C115.601 208.876 116.177 210.527 116.177 212.248" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M110.709 205.758C110.35 205.758 109.994 205.842 109.662 206.005C109.331 206.168 109.029 206.407 108.775 206.708C108.522 207.01 108.32 207.367 108.183 207.761C108.045 208.154 107.975 208.576 107.975 209.002" stroke="#FBFBFB" stroke-width="2.66667"/>
-            <path d="M110.713 212.241C110.353 212.241 109.998 212.158 109.666 211.994C109.335 211.831 109.033 211.592 108.779 211.291C108.525 210.99 108.324 210.632 108.187 210.239C108.049 209.845 107.979 209.423 107.979 208.997" stroke="#FBFBFB" stroke-width="2.66667"/>
+            <path d="M0.000875612 757.046C104.43 757.046 204.582 707.818 278.425 620.19C352.268 532.563 393.752 413.714 393.752 289.79" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M150.392 1.00073C214.935 1.00074 276.835 31.4267 322.474 85.5853C368.112 139.744 393.752 213.199 393.752 289.79" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M0.000976562 179.466C0.000978482 132.134 15.8457 86.7403 44.0494 53.2715C72.2532 19.8028 110.506 1.00024 150.392 1.00024" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M92.9707 289.79C68.3138 289.79 44.6669 278.167 27.2319 257.477C9.79685 236.787 0.00195312 208.726 0.00195313 179.466" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M92.9699 289.79C108.199 289.79 122.805 282.61 133.573 269.832C144.342 257.053 150.392 239.721 150.392 221.648" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M114.845 179.467C119.513 179.467 124.135 180.558 128.448 182.677C132.761 184.797 136.679 187.904 139.98 191.821C143.281 195.738 145.899 200.389 147.686 205.506C149.472 210.624 150.392 216.109 150.392 221.649" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M114.845 179.466C111.973 179.466 109.128 180.138 106.474 181.442C103.82 182.747 101.409 184.659 99.3777 187.069C97.3464 189.48 95.7351 192.341 94.6358 195.491C93.5365 198.64 92.9707 202.016 92.9707 205.425" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M106.642 221.649C104.847 221.649 103.069 221.229 101.41 220.414C99.7517 219.598 98.2445 218.403 96.975 216.897C95.7055 215.39 94.6984 213.602 94.0114 211.634C93.3243 209.665 92.9707 207.555 92.9707 205.425" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M106.642 221.648C108.817 221.648 110.904 220.623 112.442 218.797C113.98 216.972 114.845 214.496 114.845 211.914" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M106.642 211.914H114.845" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M106.643 205.425V221.649" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M109.377 211.915V205.425" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M109.376 208.669H106.642" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M114.846 205.425H92.9706" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M114.846 221.649V179.466" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M92.9695 221.649H150.392" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M92.9707 179.466V289.791" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M150.392 179.466H0.000471909" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M150.53 289.791L150.53 0.836363" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M0.000598637 289.79H393.752" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M-0.000263025 757.046H394.113" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M0.361927 1L394.113 1" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M0.000976562 757.047L0.000976563 0.571051" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M109.376 205.425C110.827 205.425 112.218 206.109 113.243 207.326C114.269 208.543 114.845 210.193 114.845 211.915" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M109.377 205.425C109.018 205.425 108.662 205.509 108.33 205.672C107.999 205.835 107.697 206.074 107.443 206.375C107.189 206.676 106.988 207.034 106.851 207.428C106.713 207.821 106.643 208.243 106.643 208.669" stroke="#FBFBFB" stroke-width="2"/>
+            <path d="M109.38 211.908C109.021 211.908 108.666 211.824 108.334 211.661C108.003 211.498 107.701 211.259 107.447 210.958C107.193 210.657 106.992 210.299 106.855 209.905C106.717 209.512 106.646 209.09 106.646 208.664" stroke="#FBFBFB" stroke-width="2"/>
         </g>
     </svg>
+    <h2 class="visually-hidden">ABOUT SECTION</h2>
     <div id="about-heading">
         <div class="artem">
             <span>A</span>
@@ -189,8 +187,8 @@ import Animation from "./Animation.astro"
             I spend my days focusing on the stuff that truly matters: my beloved plants,
             and digging into user research to find out what people really need.
         </p>
-        <img src="/img/Artem.png" alt="a guy with pale skin and blonde hair in a sweater sitting on a chair in school,
-    dim warm lighting, yellow halftones">
+        <!--<img src="/img/Artem.png" alt="a guy with pale skin and blonde hair in a sweater sitting on a chair in school,
+    dim warm lighting, yellow halftones">-->
     </div>
     <div class="contact-wrapper">
         <h3>CONTACT</h3>

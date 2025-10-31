@@ -1,0 +1,60 @@
+---
+import { getCollection } from "astro:content";
+import ProjectCard from "./ProjectCard.astro";
+
+const projects = await getCollection("projects")
+---
+<style>
+    section{
+        border-radius: 44px;
+        display: flex;
+        flex-direction: column;
+        height: fit-content;
+        h2{
+            text-transform: uppercase;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: 0.32px;
+
+        }
+        .cards-container{
+            display: flex;
+            width: 100%;
+        }
+        a{
+            text-decoration: none;
+            color: var(--c-dark);
+        }
+    }
+    @media screen and (width <= 30em){
+        section {
+            gap: 1.5rem;
+            padding: 2rem 1.3rem;
+
+            h2{
+                width: 100%;
+                font-size: 2rem;
+            }
+            .cards-container{
+                flex-direction: column;
+                gap: 2rem;
+
+            }
+        }
+    }
+</style>
+<section class="white-bg" id="work-section">
+    <h2>
+        Selected works
+    </h2>
+    <div class="cards-container">
+        {
+            projects.map((project) => (
+                        <a href={`/projects/${project.data.id}`}>
+                            <ProjectCard project = {project.data} />
+                        </a>
+            ))
+        }
+    </div>
+</section>
+

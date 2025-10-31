@@ -1,0 +1,24 @@
+---
+import BlogButton from "../../components/BlogButton.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+    const blogs = await getCollection("blogs")
+
+    const paths = blogs.map((blog) => ({
+        params: { id: blog.data.id },
+        props: {
+            blog: blog.data,
+        },
+    }));
+
+    return paths;
+}
+
+const { blog } = Astro.props;
+---
+
+<BaseLayout>
+    <BlogButton blog={blog} />
+</BaseLayout>
