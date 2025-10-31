@@ -1,7 +1,7 @@
 ---
 id: 3
-title: "libb"
-description: "Application designed for people with OCD, to help them manage compulsions,work with their triggers and much more..."
-image: "/img/ocare.png"
-label: "Shipped"
+title: "Chocolate Truth"
+description: "Interactive storytelling website debunking the myth that chocolate is giving you acne and bad skin in a fun manner. "
+image: "/img/project3.png"
+label: "Concept"
 ---

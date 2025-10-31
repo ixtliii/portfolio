@@ -1,0 +1,96 @@
+---
+
+---
+<style>
+    footer{
+        border-radius: 44px 44px 0 0 ;
+        display: flex;
+        flex-direction: column;
+        padding-top: 2.5rem;
+
+        .info-container{
+            display: flex;
+            flex-direction: column;
+            .container{
+                display: flex;
+                flex-direction: column;
+                gap: .5rem;
+
+                h3{
+                    color: var(--c-secondary);
+                }
+                p{
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+
+    @media screen and (width <= 30em){
+        footer{
+            padding-top: 2.5rem;
+            gap: 2.75rem;
+            .info-container{
+                padding:0 1.5rem;
+                gap: 2rem;
+                width: 100%;
+                .location{
+                    align-items: end;
+                }
+                .container{
+                    display: flex;
+                    flex-direction: column;
+                    gap: .5rem;
+
+                    h3{
+                        color: var(--c-secondary);
+                    }
+                    p{
+
+                    }
+                }
+            }
+            .header-wrapper{
+                display: flex;
+                align-items: center;
+                width: 100%;
+                padding: 0 .5rem;
+                justify-content: center;
+                h2{
+                    font-size: 3rem;
+                    width: min-content;
+                    font-weight: 900;
+                    line-height: 110%;
+                    letter-spacing: 0.065rem;
+                }
+            }
+        }
+    }
+</style>
+<footer class="white-bg">
+    <div class="info-container">
+        <div class="email container">
+            <h3>Email:</h3>
+            <p>
+                artem.diakunchak.work@gmail.com
+            </p>
+        </div>
+        <div class="location container">
+            <h3>Based in:</h3>
+            <p>
+                Kortrijk, Belgium
+            </p>
+        </div>
+        <div class="phone container">
+            <h3>Call me:</h3>
+            <p>
+                +32 495 68 34 09
+            </p>
+        </div>
+    </div>
+    <div class="header-wrapper">
+        <h2>
+            ARTEM DIAKUNCHAK
+        </h2>
+    </div>
+</footer>
