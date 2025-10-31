@@ -1,0 +1,36 @@
+---
+import Animation from "./Animation.astro";
+const {blog} = Astro.props;
+---
+<style>
+    .blog-button{
+        display: flex;
+        padding: 1rem;
+        gap: .5rem;
+        align-self: stretch;
+        color: var(--c-primary);
+        border-bottom: 1px solid #FFF;
+        flex-direction: column;
+
+        h3{
+            font-size: 1.5rem;
+            font-weight: 600;
+            line-height: 120%;
+            letter-spacing: .24px;
+        }
+        p{
+            font-size: 1.125rem;
+            font-style: normal;
+            font-weight: 400;
+        }
+    }
+</style>
+<div class="blog-button">
+    <h3>
+        /{blog.id}
+    </h3>
+    <p>
+        {blog.title}
+    </p>
+</div>
+
