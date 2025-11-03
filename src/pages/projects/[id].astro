@@ -1,7 +1,7 @@
 ---
-import ProjectCard from "../../components/ProjectCard.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getCollection } from "astro:content";
+import WorkDetails from "../../components/WorkDetails.astro";
 
 export async function getStaticPaths() {
     const projects = await getCollection("projects")
@@ -20,5 +20,5 @@ const { project } = Astro.props;
 ---
 
 <BaseLayout>
-    <ProjectCard project={project} />
+    <WorkDetails project = {project} />
 </BaseLayout>
