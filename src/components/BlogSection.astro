@@ -12,6 +12,7 @@ const blogs = await getCollection("blogs")
             align-items: center;
             justify-content: center;
             height: 100%;
+            width: 100%;
             flex-direction: column;
             .button-container{
                 display: flex;
@@ -35,9 +36,12 @@ const blogs = await getCollection("blogs")
             }
         }
     }
-    @media screen and (width <= 30em){
+    @media screen and (width >= 20em){
         section{
             height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             .golden-blog{
                 height: 100%;
                 width: 100%;
