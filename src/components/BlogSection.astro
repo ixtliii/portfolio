@@ -169,7 +169,7 @@ const blogs = await getCollection("blogs")
         <div class="button-container">
             {
                 blogs.map((blog) => (
-                        <a href={`/blogs/${blog.data.id}`}>
+                        <a href={`/blogs/${blog.slug}`}>
                             <BlogButton blog = {blog.data} />
                         </a>
                 ))
