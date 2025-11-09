@@ -1,0 +1,162 @@
+---
+const navLinks = [
+    { name: "HOME", href: "#hero-section" },
+    { name: "ABOUT", href: "#about-section" },
+    { name: "WORK", href: "#work-section" },
+    { name: "BLOG", href: "#blog-section" },
+];
+---
+
+<nav class="navbar">
+    <button class="hamburger" id="menu-toggle" aria-label="Toggle navigation menu">
+        <span class="stroke top"></span>
+        <span class="stroke bottom"></span>
+    </button>
+</nav>
+
+<div class="overlay" id="overlay-menu">
+    <ul class="nav-links">
+        {navLinks.map((link) => (
+                <li>
+                    <a href={link.href} class="overlay-link">{link.name}</a>
+                </li>
+        ))}
+    </ul>
+</div>
+
+<style>
+
+    .navbar {
+        position: fixed;
+        top: 2rem;
+        left: 0;
+        width: 100%;
+        height: 4rem;
+        z-index: 2000;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1999;
+        background-color: var(--c-dark);
+        transform: translateY(-100%);
+        opacity: 0;
+        transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+    }
+
+
+    @media screen and (width >= 20em) {
+        .navbar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 2rem 2rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            color: var(--c-dark);
+            text-decoration: none;
+        }
+
+        .hamburger {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width:4.5rem;
+            gap: .75rem;
+            z-index: 2001;
+            border-radius: 1rem;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(40px);
+        }
+
+        .stroke {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: var(--c-primary);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            mix-blend-mode: difference;
+        }
+
+        .overlay {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .overlay.is-open {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin-top: 4rem;
+        }
+
+        .overlay-link {
+            color: var(--c-primary);
+            text-decoration: none;
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+            padding: 0.5rem 0;
+            transition: color 0.2s ease;
+        }
+
+        .overlay-link:hover {
+            color: var(--c-primary);
+        }
+
+        .hamburger.is-active .top {
+            transform: translateY(4px) rotate(45deg);
+        }
+
+        .hamburger.is-active .bottom {
+            transform: translateY(-4px) rotate(-45deg);
+        }
+    }
+</style>
+
+<script>
+    const toggleButton = document.getElementById('menu-toggle');
+    const overlayMenu = document.getElementById('overlay-menu');
+    const links = overlayMenu.querySelectorAll('.overlay-link');
+
+    const closeMenu = () => {
+        toggleButton.classList.remove('is-active');
+        overlayMenu.classList.remove('is-open');
+    };
+
+    toggleButton.addEventListener('click', () => {
+        toggleButton.classList.toggle('is-active');
+        overlayMenu.classList.toggle('is-open');
+
+        if (overlayMenu.classList.contains('is-open')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    });
+
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            closeMenu();
+            document.body.style.overflow = '';
+        });
+    });
+</script>
