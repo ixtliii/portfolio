@@ -50,7 +50,7 @@ const projects = await getCollection("projects")
     <div class="cards-container">
         {
             projects.map((project) => (
-                        <a href={`/projects/${project.data.id}`}>
+                        <a href={`/projects/${project.slug}`}>
                             <ProjectCard project = {project.data} />
                         </a>
             ))
