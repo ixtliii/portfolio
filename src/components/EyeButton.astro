@@ -93,13 +93,11 @@ const { section } = Astro.props;
     .wrapper:hover .circular-text {
         transform: translate(-50%, -50%) rotate(360deg);
     }
-
-    @media screen and (width >= 20em){
-        .wrapper{
-            grid-column: 10;
-            grid-row: 8;
-        }
+    .wrapper{
+        grid-column: 10;
+        grid-row: 8;
     }
+
 </style>
 
 <a href=`#${section}` class="wrapper" id="animated-eye">

@@ -2,20 +2,58 @@
 import Animation from "./Animation.astro"
 ---
 <style>
-    .golden-about path{
-        opacity: 0;
-    }
     section{
+        margin-top: 5vh;
+        height: 90vh;
+        .golden-about{
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            path{
+                opacity: 0;
+            }
+        }
+        .about-wrapper{
+            display: flex;
+            flex-direction: column;
+            grid-column: 6 / span 7;
+            gap: 2.5rem;
+
+            .image-container{
+                width: 100%;
+                height: 8.5rem;
+                overflow: hidden;
+                border-radius: .8rem;
+                img{
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    transform: scale(1.5);
+                    transform-origin: 40% 0%;
+                }
+            }
+        }
         #about-heading{
             color: var(--c-primary);
             display: flex;
+            grid-column: 1 / span 5;
+            grid-row: 1 / span 1;
+            gap: 1.5rem;
+            padding: 0;
+            margin: 0;
+            height: 0;
             .artem, .diakunchak{
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-
+                padding: 0;
+                margin: 0;
+                row-gap: 0;
                 span{
-                    font-size: 2.4rem;
+                    font-size: 2rem;
                     font-weight: 700;
                     line-height: 130%;
                 }
@@ -36,14 +74,17 @@ import Animation from "./Animation.astro"
             display: flex;
             flex-direction: column;
             gap: .5rem;
-
+            grid-row: 8;
+            grid-column: 1 / span 10;
             h3{
                 color: var(--c-primary);
                 font-style: normal;
                 font-weight: 500;
                 letter-spacing: 0.54px;
+                font-size: 1.2rem;
             }
             p{
+                line-height: 160%;
                 span{
                     a{
                         font-weight: 500;
@@ -59,83 +100,7 @@ import Animation from "./Animation.astro"
             }
         }
     }
-    @media screen and (width >= 20em){
-        section{
-            margin-top: 5vh;
-            height: 90vh;
-            .golden-about{
-                height: 100%;
-                width: 100%;
-                position: absolute;
-                top: 0;
-                left: 0;
-                z-index: -1;
-            }
 
-            #about-heading{
-                color: var(--c-primary);
-                display: flex;
-                grid-column: 1 / span 5;
-                grid-row: 1 / span 1;
-                gap: 1.5rem;
-                padding: 0;
-                margin: 0;
-                height: 0;
-
-                .artem, .diakunchak{
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    padding: 0;
-                    margin: 0;
-                    row-gap: 0;
-                    span{
-                        font-size: 2rem;
-                        font-weight: 700;
-                        line-height: 130%;
-                    }
-                }
-
-            }
-
-            .about-wrapper{
-                display: flex;
-                flex-direction: column;
-                grid-column: 6 / span 7;
-                gap: 2.5rem;
-
-                .image-container{
-                    width: 100%;
-                    height: 8.5rem;
-                    overflow: hidden;
-                    border-radius: .8rem;
-
-                    img{
-                        width: 100%;
-                        height: 100%;
-                        object-fit: cover;
-                        transform: scale(1.5);
-                        transform-origin: 40% 0%;
-                    }
-                }
-            }
-
-            .contact-wrapper{
-                grid-row: 8;
-                grid-column: 1 / span 10;
-                h3{
-                    color: var(--c-primary);
-                    font-size: 1.2rem;
-                }
-
-                p{
-                    line-height: 160%;
-                };
-            }
-
-        }
-
-    }
 </style>
 
 <section class="grid" id="about-section">

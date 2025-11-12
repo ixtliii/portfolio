@@ -21,6 +21,9 @@ const navLinks = [
                     <a href={link.href} class="overlay-link">{link.name}</a>
                 </li>
         ))}
+        <li>
+            <a href="/Artem-Diakunchak-CV.pdf" download>Download CV</a>
+        </li>
     </ul>
 </div>
 
@@ -122,11 +125,11 @@ const navLinks = [
         }
 
         .hamburger.is-active .top {
-            transform: translateY(4px) rotate(45deg);
+            transform: translateY(300%) rotate(45deg);
         }
 
         .hamburger.is-active .bottom {
-            transform: translateY(-4px) rotate(-45deg);
+            transform: translateY(-300%) rotate(-45deg);
         }
     }
 </style>
