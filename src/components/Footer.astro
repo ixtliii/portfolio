@@ -1,5 +1,4 @@
 ---
-
 ---
 <style>
     footer{
@@ -7,10 +6,17 @@
         display: flex;
         flex-direction: column;
         padding-top: 2.5rem;
+        gap: 2.75rem;
 
         .info-container{
             display: flex;
             flex-direction: column;
+            padding:0 1.5rem;
+            gap: 2rem;
+            width: 100%;
+            .location{
+                align-items: end;
+            }
             .container{
                 display: flex;
                 flex-direction: column;
@@ -24,46 +30,29 @@
                 }
             }
         }
+        .header-wrapper{
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 0 .5rem;
+            justify-content: center;
+            padding-inline: 0.5rem;
+
+            h2{
+                font-size: 11vw;
+                width: 100%;
+                white-space: normal;
+                font-weight: 900;
+                line-height: 110%;
+                letter-spacing: 0.065rem;
+            }
+        }
     }
 
-    @media screen and (width >= 20em){
-        footer{
-            padding-top: 2.5rem;
-            gap: 2.75rem;
-            .info-container{
-                padding:0 1.5rem;
-                gap: 2rem;
-                width: 100%;
-                .location{
-                    align-items: end;
-                }
-                .container{
-                    display: flex;
-                    flex-direction: column;
-                    gap: .5rem;
-
-                    h3{
-                        color: var(--c-secondary);
-                    }
-                    p{
-
-                    }
-                }
-            }
-            .header-wrapper{
-                display: flex;
-                align-items: center;
-                width: 100%;
-                padding: 0 .5rem;
-                justify-content: center;
-                h2{
-                    font-size: 3rem;
-                    width: min-content;
-                    font-weight: 900;
-                    line-height: 110%;
-                    letter-spacing: 0.065rem;
-                }
-            }
+    @media screen and (width >= 40em) {
+        .header-wrapper h2 {
+            font-size: 9vw;
+            white-space: nowrap;
         }
     }
 </style>

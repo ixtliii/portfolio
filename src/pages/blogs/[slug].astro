@@ -1,25 +1,31 @@
 ---
-import BlogButton from "../../components/BlogButton.astro";
+
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
+import { getCollection, render } from "astro:content";
 import BlogDetails from "../../components/BlogDetails.astro";
 
 export async function getStaticPaths() {
-    const blogs = await getCollection("blogs")
+    const blogs = await getCollection("blogs");
 
-    const paths = blogs.map((blog) => ({
-        params: { slug: blog.slug },
+    const paths = blogs.map((blogEntry) => ({
+        params: { slug: blogEntry.slug },
         props: {
-            blog: blog.data,
+            blogEntry: blogEntry,
         },
     }));
 
     return paths;
 }
 
-const { blog } = Astro.props;
+const { blogEntry } = Astro.props;
+
+const { Content } = await render(blogEntry);
+
+const blogData = blogEntry.data;
 ---
 
-<BaseLayout pageTitle = {blog.title}>
-    <BlogDetails blog={blog} />
+<BaseLayout pageTitle={blogData.title}>
+    <BlogDetails blog={blogData}>
+        <Content />
+    </BlogDetails>
 </BaseLayout>

@@ -12,7 +12,19 @@ const { project } = Astro.props;
         flex-direction: column;
         gap: 3rem;
         justify-content: center;
+        min-height: 90vh;
+        align-items: center;
+        height: fit-content;
         .section-wrapper{
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 90%;
+            align-items: center;
+            h3{
+                font-size: 2rem;
+                font-weight: 700;
+            }
             .upper-container{
                 display: flex;
                 flex-direction: row;
@@ -34,20 +46,20 @@ const { project } = Astro.props;
                 border-radius: 1.5rem;
             }
         }
+        .btn{
+            justify-self: end;
+        }
     }
-    @media screen and (width >= 20em){
+    @media screen and (width >= 50em ){
         section{
             .section-wrapper{
-                display: flex;
-                flex-direction: column;
-                gap: 1rem;
-                h3{
-                    font-size: 2rem;
-                    font-weight: 700;
+                width: 70%;
+                img{
+                    border: 1px solid #fff;
+                    border-radius: 1.5rem;
+                    max-width: 25rem;
+                    max-height: 25rem;
                 }
-            }
-            .btn{
-                justify-self: end;
             }
         }
     }
@@ -63,7 +75,7 @@ const { project } = Astro.props;
         </div>
         <img src={project.image} alt="">
         <div class="description-container">
-            <p>{project.description}</p>
+            <slot />
         </div>
     </div>
     <div class="btn">

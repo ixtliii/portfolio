@@ -7,6 +7,18 @@ const blogs = await getCollection("blogs")
 ---
 <style>
     section{
+        height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        .golden-blog{
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: -10px;
+            left: 0;
+            z-index: -1;
+        }
         .content-wrapper{
             display: flex;
             align-items: center;
@@ -36,22 +48,23 @@ const blogs = await getCollection("blogs")
             }
         }
     }
-    @media screen and (width >= 20em){
+    @media screen and (width >= 55em) {
         section{
-            height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
             .golden-blog{
-                height: 100%;
+                transform: rotate(-90deg) scale(1.8) scaleY(-1);
                 width: 100%;
-                position: absolute;
-                top: -10px;
-                left: 0;
+                height: 100vh;
                 z-index: -1;
+                path{
+                    stroke-width: 1px;
+                }
             }
             .content-wrapper{
-
+                h2{
+                    font-size: 3rem;
+                }
             }
         }
     }

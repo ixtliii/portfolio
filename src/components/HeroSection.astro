@@ -7,61 +7,105 @@ import Animation from './Animation.astro';
     section{
         height: 90vh;
         border-radius: 0 0 44px 44px;
+        .golden{
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
 
+            .path {
+                opacity: 0;
+            }
+        }
         h1{
+            font-size: var(--fs-h1);
+            grid-column: 1 / span 12;
+            grid-row: 8 / span 3;
+            align-self: end;
             font-style: normal;
             font-weight: 900;
             line-height: 100%;
             letter-spacing: 0.12rem;
             color: var(--c-dark);
-            align-self: end;
-        }
-        h1 .char {
-            display: inline-block;
-        }
-
-        .golden path {
-            opacity: 0;
+            .char {
+                display: inline-block;
+            }
         }
         .name-text{
+            grid-column: 1 / span 1;
+            grid-row: 2 / span 3;
+            font-size: var(--fs-body);
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            justify-self: start;
             font-style: normal;
             font-weight: 400;
             line-height: normal;
             letter-spacing: 0.01rem;
         }
     }
-    @media screen and (width >= 20em){
+
+   @media  screen and (width >= 30em) {
         section{
-
-            .golden{
-                height: 100%;
-                width: 100%;
-                position: absolute;
-                top: 0;
-                left: 0;
-            }
             h1{
-                font-size: var(--fs-h1);
-                grid-column: 1 / span 12;
-                grid-row: 8 / span 3;
-                align-self: end;
+                font-size: 5rem;
             }
-
-            .name-text{
-                grid-column: 1 / span 1;
-                grid-row: 2 / span 3;
-                font-size: var(--fs-body);
-                writing-mode: vertical-rl;
-                text-orientation: mixed;
-                justify-self: start;
+            .golden{
+                width: min-content;
+                right: 0;
             }
         }
-
-    }
-    @media screen and (width <= 24em){
+   }
+    @media screen and (width >= 35em) {
         section{
             h1{
-                font-size: 3rem;
+                font-size: 5rem;
+            }
+            .golden{
+                width: min-content;
+                right: 0;
+            }
+        }
+    }
+    @media screen and (width >= 45em) {
+        section{
+            .name-text{
+                grid-column: 11 / span 2;
+                grid-row: 8 / span 1;
+                writing-mode: horizontal-tb;
+                font-size: 1.125rem;
+            }
+        }
+    }
+    @media screen and (width >= 55em) {
+        section{
+            grid-template-columns: repeat(13, 1fr);
+            grid-template-rows: repeat(13, 1fr);
+            height: 100vh;
+            overflow:hidden;
+
+            .golden{
+                transform: rotate(90deg);
+                scale: 1.9;
+                width: 100%;
+                height: 100vh;
+                z-index: 0;
+                path{
+                    stroke-width: 1px;
+                }
+            }
+            h1{
+                font-size: 7rem;
+                grid-column: 1 / span 12;
+                grid-row: 13 / span 3;
+            }
+            .name-text{
+                grid-column: 12 / span 2;
+                grid-row: 10 / span 1;
+                writing-mode: horizontal-tb;
+                font-size: 1.125rem;
+                padding:0;
+                z-index: 1;
             }
         }
     }
