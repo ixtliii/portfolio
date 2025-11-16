@@ -24,17 +24,38 @@ const projects = await getCollection("projects")
         .cards-container{
             display: flex;
             width: 100%;
-            flex-direction: column;
             gap: 2rem;
-
+            flex-wrap: wrap;
+            justify-content: center;
         }
         a{
             text-decoration: none;
             color: var(--c-dark);
+            display: flex;
+            width: fit-content;
         }
     }
-    @media screen and (width >= 20em){
-
+    @media screen and (width >= 55em){
+        section{
+            min-height: 80vh;
+            justify-content: space-between;
+            align-items: center;
+            h2{
+                font-size: 3rem;
+            }
+            .cards-container{
+                display: flex;
+                width: 100%;
+                justify-content: space-around;
+                gap: 0;
+                align-items: end;
+                a{
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+            }
+        }
     }
 </style>
 <section class="white-bg" id="work-section">
