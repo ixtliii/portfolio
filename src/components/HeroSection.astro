@@ -7,15 +7,15 @@ import Animation from './Animation.astro';
     section{
         height: 90vh;
         border-radius: 0 0 44px 44px;
-        .golden path {
-            opacity: 0;
-        }
         .golden{
             height: 100%;
             width: 100%;
             position: absolute;
             top: 0;
-            left: 0;
+
+            .path {
+                opacity: 0;
+            }
         }
         h1{
             font-size: var(--fs-h1);
@@ -45,6 +45,70 @@ import Animation from './Animation.astro';
         }
     }
 
+   @media  screen and (width >= 30em) {
+        section{
+            h1{
+                font-size: 5rem;
+            }
+            .golden{
+                width: min-content;
+                right: 0;
+            }
+        }
+   }
+    @media screen and (width >= 35em) {
+        section{
+            h1{
+                font-size: 5rem;
+            }
+            .golden{
+                width: min-content;
+                right: 0;
+            }
+        }
+    }
+    @media screen and (width >= 45em) {
+        section{
+            .name-text{
+                grid-column: 11 / span 2;
+                grid-row: 8 / span 1;
+                writing-mode: horizontal-tb;
+                font-size: 1.125rem;
+            }
+        }
+    }
+    @media screen and (width >= 55em) {
+        section{
+            grid-template-columns: repeat(13, 1fr);
+            grid-template-rows: repeat(13, 1fr);
+            height: 100vh;
+            overflow:hidden;
+
+            .golden{
+                transform: rotate(90deg);
+                scale: 1.9;
+                width: 100%;
+                height: 100vh;
+                z-index: 0;
+                path{
+                    stroke-width: 1px;
+                }
+            }
+            h1{
+                font-size: 7rem;
+                grid-column: 1 / span 12;
+                grid-row: 13 / span 3;
+            }
+            .name-text{
+                grid-column: 12 / span 2;
+                grid-row: 10 / span 1;
+                writing-mode: horizontal-tb;
+                font-size: 1.125rem;
+                padding:0;
+                z-index: 1;
+            }
+        }
+    }
 </style>
 
 <section class="white-bg grid" id="hero-section">
