@@ -1,3 +1,79 @@
 ---
-$END$
+const { title, level, icon } = Astro.props;
 ---
+
+<article class="skill-card">
+    <div class="card-header">
+        <span class="skill-icon">{icon}</span>
+    </div>
+
+    <div class="card-footer">
+        <h3 class="skill-title">{title}</h3>
+        {level && <span class="skill-pill">{level}</span>}
+    </div>
+</article>
+
+<style>
+    .skill-card {
+        background-color: #ffffff;
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        aspect-ratio: 1 / 1;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: 1px solid transparent;
+
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    }
+
+    .skill-card:hover {
+        transform: translateY(-4px);
+        border-color: #000; /* High contrast hover style */
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .skill-icon {
+        font-size: 2.5rem;
+        line-height: 1;
+    }
+
+    .card-footer {
+        margin-top: auto;
+    }
+
+    .skill-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin: 0 0 0.75rem 0;
+        text-transform: uppercase; /* Matches the "UX/UI DESIGNER" header style */
+        letter-spacing: -0.02em;
+        color: #000;
+    }
+
+    /* The "Pill" tag style seen in the portfolio project cards */
+    .skill-pill {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px; /* Full pill shape */
+        border: 1px solid #e5e5e5;
+        color: #666;
+        background-color: transparent;
+    }
+
+    /* Dark Mode support (if your skills section is in the dark area) */
+    :global(.dark-theme) .skill-card {
+        background-color: #1a1a1a;
+        color: #fff;
+    }
+    :global(.dark-theme) .skill-title {
+        color: #fff;
+    }
+</style>
