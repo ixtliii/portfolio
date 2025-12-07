@@ -1,0 +1,26 @@
+---
+import GridShowcaseLayout from '../layouts/GridShowcaseLayout.astro';
+import SkillCard from '../components/SkillCard.astro';
+
+const skillsData = [
+    { name: "JavaScript", icon: "🚀", level: "Intermediate" },
+    { name: "Astro", icon: "👩‍🚀", level: "Intermediate" },
+    { name: "React", icon: "⚛️", level: "Intermediate" },
+    { name: "UI Design", icon: "🎨", level: "Expert" },
+];
+---
+
+<GridShowcaseLayout
+        title="My Technical Toolkit"
+        description="A collection of the languages, tools, and frameworks I use to build products."
+>
+
+    {skillsData.map((skill) => (
+            <SkillCard
+                    title={skill.name}
+                    icon={skill.icon}
+                    level={skill.level}
+            />
+    ))}
+
+</GridShowcaseLayout>
