@@ -1,0 +1,32 @@
+.marquee-divider {
+  width: 100%;
+  overflow: hidden;
+  padding: 28px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.marquee-divider-track {
+  display: flex;
+  white-space: nowrap;
+  will-change: transform;
+  align-items: center;
+}
+
+.marquee-divider-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 40px;
+  padding-right: 40px;
+  font-size: clamp(20px, 2.6vw, 34px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.marquee-divider-star {
+  font-size: 0.55em;
+  color: var(--text-muted);
+}

@@ -1,0 +1,12 @@
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--text-primary);
+  transform-origin: left;
+  transform: scaleX(0);
+  z-index: 200;
+  will-change: transform;
+}
