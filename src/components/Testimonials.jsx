@@ -13,10 +13,10 @@ const TESTIMONIALS = [
     initial: "S",
   },
   {
-    quote: "Artem consistently demonstrated a strong grasp of product thinking and an exceptional ability to move between design and engineering. His work on the Cogo redesign was precise, fast, and well-reasoned.",
-    name: "[ Name ]",
-    title: "CEO, Mayten Technologies",
-    initial: "M",
+    quote: "I had a great pleasure working on multiple projects with Artem. He has shown his great talent and attention to details while being able to communicate with both clients and developers. Thanks to his technical background he could easily translate business requirements to design implementations that were both realistic from a development perspective and fulfilled all client requirements. He takes great ownership — bringing features and products from the early stages, all the way until the launch and maintenance.",
+    name: "Leonid Romaniukha",
+    title: "Full Stack Developer, Mayten",
+    initial: "L",
   },
 ]
 
