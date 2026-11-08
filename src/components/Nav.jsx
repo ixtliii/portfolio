@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { gsap } from 'gsap'
+import { scrollToEl } from '../lib/scroll'
 import './Nav.css'
 
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
@@ -52,11 +53,11 @@ export default function Nav() {
       // after route change, scroll happens via browser hash handling
       setTimeout(() => {
         const el = document.querySelector(hash)
-        if (el) el.scrollIntoView({ behavior: 'smooth' })
+        scrollToEl(el)
       }, 120)
     } else {
       const el = document.querySelector(hash)
-      if (el) el.scrollIntoView({ behavior: 'smooth' })
+      scrollToEl(el)
     }
   }
 

@@ -1,17 +1,10 @@
-import Hero from '../components/Hero'
-import Work from '../components/Work'
-import About from '../components/About'
-import Testimonials from '../components/Testimonials'
-import Contact from '../components/Contact'
+import Archive from '../components/Archive/Archive'
 
 export default function Home() {
     return (
         <>
-            <Hero />
-            <Work />
-            <About />
-            <Testimonials />
-            <Contact />
+            <Archive />
+            {/* About, Kind words and Contact are being remade; the corner helper covers navigation for now */}
         </>
     )
 }

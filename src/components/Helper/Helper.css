@@ -1,0 +1,198 @@
+/* ═══════════ the corner helper ═══════════ */
+
+.hp {
+    position: fixed;
+    z-index: 9500;
+    width: var(--hp-size);
+    height: var(--hp-size);
+    font-family: var(--font-shell);
+}
+
+.hp-btn {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    border-radius: 50%;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.35s var(--ease-out);
+}
+.hp-btn:hover { transform: translateY(-3px) rotate(-4deg); }
+.hp-btn:active { transform: scale(0.94); }
+.hp-btn:focus-visible { outline: 2px solid var(--sh-ink-b); outline-offset: -8px; }
+.hp-canvas { position: relative; display: block; width: 100%; height: 100%; }
+
+/* dotted ring that breathes behind the mascot: "I'm clickable" */
+.hp-ring {
+    position: absolute;
+    inset: 12%;
+    border-radius: 50%;
+    border: 2px dotted var(--sh-ink-b);
+    opacity: 0;
+    animation: hp-ring 3.6s ease-out infinite;
+    pointer-events: none;
+}
+.hp-btn:hover .hp-ring { animation-duration: 1.6s; }
+@keyframes hp-ring {
+    0%   { opacity: 0;    transform: scale(0.82) rotate(0deg); }
+    25%  { opacity: 0.45; }
+    70%  { opacity: 0;    transform: scale(1.12) rotate(40deg); }
+    100% { opacity: 0;    transform: scale(1.12) rotate(40deg); }
+}
+
+/* the label pill to the left of the mascot */
+.hp-tag {
+    position: absolute;
+    right: calc(100% - 10px);
+    bottom: 38%;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 11px 7px 9px;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--sh-pill) 0%, var(--sh-pill-b) 100%);
+    box-shadow: 0 6px 18px -10px rgba(20, 20, 24, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    color: var(--sh-ink-a);
+    font: 400 12px/1 var(--font-shell);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: opacity 0.3s, transform 0.4s var(--ease-out);
+}
+.hp-tag:hover { transform: translateX(-3px); }
+.hp-tag.is-hidden { opacity: 0; transform: translateX(8px) scale(0.95); pointer-events: none; }
+.hp-tag-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--sh-ink-a);
+    animation: hp-dot 1.8s ease-in-out infinite;
+}
+@keyframes hp-dot { 50% { opacity: 0.25; transform: scale(0.7); } }
+.hp-fallback {
+    position: absolute;
+    inset: 22%;
+    border-radius: 50%;
+    background: linear-gradient(160deg, #ffffff, #c9c9cd 60%, #8f8f95);
+}
+
+/* ── speech bubble, up and to the left of the mascot ── */
+.hp-bubble {
+    position: absolute;
+    right: calc(var(--hp-size) * 0.32);
+    bottom: calc(var(--hp-size) * 0.9);
+    width: max-content;
+    max-width: min(250px, 70vw);
+    padding: 12px 14px;
+    border-radius: 18px;
+    background: linear-gradient(180deg, var(--sh-pill) 0%, var(--sh-pill-b) 100%);
+    box-shadow: 0 10px 30px -12px rgba(20, 20, 24, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    color: var(--sh-ink-a);
+    pointer-events: auto;
+}
+.hp-bubble[style*="opacity: 0"] { pointer-events: none; }
+.hp-text {
+    margin: 0;
+    min-height: 1.35em;
+    font-size: 13px;
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+}
+
+/* ── the menu: the old navbar, mirrored for the corner ── */
+.hp-nav {
+    position: absolute;
+    right: calc(var(--hp-size) * 0.3);
+    bottom: calc(var(--hp-size) * 0.92);
+    width: 61px;
+    z-index: 2;
+}
+.hp-goo-defs { position: absolute; width: 0; height: 0; }
+.hp-goo {
+    position: absolute;
+    right: -30px;
+    top: -30px;
+    width: 400px;
+    height: calc(100% + 60px);
+    /* goo first, then a soft shadow + hairline, so the panels read on any background */
+    filter: url(#hp-goo) drop-shadow(0 0 0.6px rgba(20, 20, 24, 0.16)) drop-shadow(0 8px 18px rgba(20, 20, 24, 0.09));
+    pointer-events: none;
+}
+.hp-goo > * { position: absolute; margin-top: 30px; top: 0; }
+.hp-nav-col { right: 30px; width: 61px; border-radius: 16px; background: var(--sh-panel); }
+.hp-nav-blob { right: 31px; height: 54px; border-radius: 16px; background: var(--sh-panel); }
+.hp-nav-cap {
+    position: absolute;
+    right: 2px;
+    font: 400 10px/20px var(--font-shell);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: var(--sh-icon);
+    pointer-events: none;
+    transition: top 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hp-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    object-fit: cover;
+    filter: grayscale(0.15);
+    box-shadow: 0 0 0 1.5px var(--sh-panel), 0 0 0 2.5px var(--sh-icon);
+}
+.hp-nav-btn:hover .hp-thumb { filter: none; }
+.hp-nav-pill {
+    position: absolute;
+    z-index: 2;
+    right: 1px;
+    padding: 8px;
+    width: max-content;
+    will-change: transform, top;
+}
+.hp-nav-pill .sh-pill { text-decoration: none; color: inherit; gap: 8px; padding-left: 12px; padding-right: 14px; }
+.hp-pill-icon {
+    display: flex;
+    width: 18px;
+    height: 18px;
+    color: var(--sh-ink-a);
+    animation: hp-pill-icon 0.5s var(--ease-out) both;
+}
+.hp-pill-icon svg, .hp-pill-icon img { width: 18px; height: 18px; }
+@keyframes hp-pill-icon { from { opacity: 0; transform: scale(0.4) rotate(-20deg); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
+.hp-nav-btn {
+    position: absolute;
+    z-index: 1;
+    right: 20.5px;
+    display: flex;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--sh-icon);
+    cursor: pointer;
+    transition: color 0.25s;
+    -webkit-tap-highlight-color: transparent;
+}
+.hp-nav-btn:hover { color: var(--sh-ink-a); }
+.hp-nav-btn svg { width: 20px; height: 20px; transition: transform 0.35s var(--ease-out); }
+.hp-nav-btn:hover svg { transform: scale(1.12); }
+.hp-nav-btn:focus-visible { outline: 2px solid var(--sh-ink-b); outline-offset: 2px; border-radius: 4px; }
+
+/* two little dots trailing down to the mascot */
+.hp-tail { position: absolute; right: 6px; bottom: 0; width: 0; height: 0; }
+.hp-tail i { position: absolute; border-radius: 50%; background: var(--sh-pill-b); }
+.hp-tail i:nth-child(1) { width: 12px; height: 12px; right: -6px; bottom: -10px; }
+.hp-tail i:nth-child(2) { width: 6px;  height: 6px;  right: -14px; bottom: -20px; }
+
+@media (max-width: 700px) {
+    .hp-tag { font-size: 11px; padding: 6px 9px 6px 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hp-ring, .hp-tag-dot { animation: none; }
+    .hp-btn { transition: none; }
+}

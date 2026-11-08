@@ -9,6 +9,7 @@ const LINKS = [
   { label: 'Email', value: 'artem.diakunchak.work@gmail.com', href: 'mailto:artem.diakunchak.work@gmail.com' },
   { label: 'LinkedIn', value: 'linkedin.com/in/artem-diakunchak', href: 'https://www.linkedin.com/in/artem-diakunchak-b6142123b/' },
   { label: 'Behance', value: 'behance.net/artemdiakunchak', href: 'https://www.behance.net/artemdiakunchak' },
+  { label: 'Résumé', value: 'Download CV (PDF)', href: `${import.meta.env.BASE_URL}Artem_Diakunchak-CV.pdf`, download: 'Artem Diakunchak — CV.pdf' },
 ]
 
 export default function Contact() {
@@ -63,7 +64,7 @@ export default function Contact() {
 
         <div ref={linksRef} className="contact-links">
           {LINKS.map((link, i) => (
-            <a key={i} href={link.href} className="contact-link" target="_blank" rel="noopener noreferrer">
+            <a key={i} href={link.href} className="contact-link" target="_blank" rel="noopener noreferrer" download={link.download}>
               <span className="contact-link-label mono">{link.label}</span>
               <span className="contact-link-value">{link.value}</span>
               <span className="contact-link-arrow">↗</span>
