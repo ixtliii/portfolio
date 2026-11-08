@@ -40,7 +40,7 @@ export default function Testimonials() {
   }, [])
 
   return (
-    <section className="testimonials" ref={sectionRef}>
+    <section id="testimonials" className="testimonials" ref={sectionRef}>
       <div ref={headerRef} className="section-header">
         <div className="section-pill">
           <span className="section-num">05</span>

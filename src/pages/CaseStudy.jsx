@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { marked } from 'marked'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { CASE_STUDIES } from '../caseStudies'
+import { scrollToEl, scrollToY, onScroll as onBoxScroll, getScroller, topInView } from '../lib/scroll'
 import './CaseStudy.css'
+import { goTo } from '../lib/transition'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -13,7 +15,6 @@ const slugify = (s) => s.toLowerCase().replace(/[^\w]+/g, '-').replace(/^-|-$/g,
 
 export default function CaseStudy() {
   const { slug } = useParams()
-  const navigate = useNavigate()
   const study = CASE_STUDIES[slug]
   const contentRef = useRef(null)
   const heroRef = useRef(null)
@@ -50,7 +51,7 @@ export default function CaseStudy() {
   // Entrance animation
   useEffect(() => {
     if (!study) return
-    window.scrollTo(0, 0)
+    scrollToY(0, { immediate: true })
 
     const tl = gsap.timeline({ delay: 0.1 })
     tl.fromTo(heroRef.current.children,
@@ -69,31 +70,34 @@ export default function CaseStudy() {
   // sections and fast scrolling can slip through an observer's margin band).
   useEffect(() => {
     if (!study) return
-    const content = contentRef.current
-    if (!content) return
-    const headings = Array.from(content.querySelectorAll('h1[id], h2[id]'))
-    if (!headings.length) return
+    if (!contentRef.current) return
 
-    const OFFSET = 130 // px below the top (clears the fixed nav) where "current" is measured
+    const OFFSET = 60 // px below the top of the content box where "current" is measured
 
     const onScroll = () => {
+      // re-query each time: the article's DOM can be re-rendered after this effect runs
+      const content = contentRef.current
+      if (!content) return
+      const headings = Array.from(content.querySelectorAll('h1[id], h2[id]'))
+      if (!headings.length) return
       let current = headings[0].id
       for (const h of headings) {
-        if (h.getBoundingClientRect().top - OFFSET <= 0) current = h.id
+        if (topInView(h) - OFFSET <= 0) current = h.id
         else break
       }
       // Near the very bottom, force the last section active so it can highlight
-      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      const sc = getScroller()
+      if (sc.clientHeight + sc.scrollTop >= sc.scrollHeight - 4) {
         current = headings[headings.length - 1].id
       }
       setActiveId(prev => (prev === current ? prev : current))
     }
 
     onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
+    const off = onBoxScroll(onScroll)
     window.addEventListener('resize', onScroll)
     return () => {
-      window.removeEventListener('scroll', onScroll)
+      off()
       window.removeEventListener('resize', onScroll)
     }
   }, [html, study])
@@ -102,21 +106,21 @@ export default function CaseStudy() {
     return (
       <div className="cs-notfound">
         <p>Case study not found.</p>
-        <Link to="/" className="btn-secondary">← Back home</Link>
+        <Link to="/" className="btn-secondary" onClick={(e) => { e.preventDefault(); goTo('/') }}>← Back home</Link>
       </div>
     )
   }
 
   const scrollTo = (id) => {
     const el = document.getElementById(id)
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    scrollToEl(el, { offset: -24 })
   }
 
   return (
     <article className="cs">
       {/* Top bar */}
       <div className="cs-topbar">
-        <button className="cs-back" onClick={() => navigate('/')}>
+        <button className="cs-back" onClick={() => goTo('/')}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <path d="M12 7H2M6 3L2 7l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -194,7 +198,7 @@ export default function CaseStudy() {
 
       {/* Next project footer */}
       <footer className="cs-footer">
-        <Link to="/" className="cs-footer-link">
+        <Link to="/" className="cs-footer-link" onClick={(e) => { e.preventDefault(); goTo('/') }}>
           <span className="mono">← All work</span>
         </Link>
       </footer>

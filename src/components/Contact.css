@@ -1,4 +1,5 @@
-.contact { padding: 80px 40px 32px; }
+.contact {
+  container-type: inline-size;   /* type scales with the shell's content box */ padding: 80px 40px 32px; }
 
 .contact-inner {
   background: var(--bg-card);
@@ -45,7 +46,7 @@
 
 .contact-big-line {
   display: block;
-  font-size: clamp(52px, 9vw, 130px);
+  font-size: clamp(40px, 9cqw, 130px);
   font-weight: 500;
   letter-spacing: -0.045em;
   line-height: 1.02;

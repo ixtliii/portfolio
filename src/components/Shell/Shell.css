@@ -1,0 +1,262 @@
+/* ═══════════ SHELL — Figma "Desktop - 2" (1:42) ═══════════
+   Every measurement is the design value at 1440×1024, scaled by
+   --kx (width) / --ky (height) / --ks (uniform) set from JS.
+   Colours live in index.css (--sh-*) so dark mode can swap them. */
+
+.shell {
+    --col: calc(121px * var(--kx, 1));          /* x of the vertical line   */
+    --band: calc(349px * var(--ky, 1));         /* y of the horizontal line */
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    font-family: var(--font-shell);
+}
+
+.sh-bg {
+    position: absolute;
+    inset: 0;
+    /* the frame's own fill, exactly as exported from Figma: an angled radial
+       ellipse, white at the bottom-centre → #D4ECFF (CSS gradients can't rotate) */
+    background: var(--sh-bg-b) center / 100% 100% no-repeat url("data:image/svg+xml;utf8,<svg viewBox='0 0 1440 1024' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%' width='100%' fill='url(%23grad)' opacity='1'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(72 -51.2 72 101.25 720 1024)'><stop stop-color='rgba(255,255,255,1)' offset='0'/><stop stop-color='rgba(188,215,236,1)' offset='1'/></radialGradient></defs></svg>");
+    transition: opacity 0.45s ease;
+}
+.sh-bg--dark {
+    background: var(--sh-bg-b) center / 100% 100% no-repeat url("data:image/svg+xml;utf8,<svg viewBox='0 0 1440 1024' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%' width='100%' fill='url(%23grad)' opacity='1'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(72 -51.2 72 101.25 720 1024)'><stop stop-color='rgba(28,39,66,1)' offset='0'/><stop stop-color='rgba(10,15,29,1)' offset='1'/></radialGradient></defs></svg>");
+    opacity: 0;
+}
+[data-theme="dark"] .sh-bg--dark { opacity: 1; }
+[data-palette="mono"] .sh-bg { background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 1440 1024' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%' width='100%' fill='url(%23grad)' opacity='1'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(72 -51.2 72 101.25 720 1024)'><stop stop-color='rgba(255,255,255,1)' offset='0'/><stop stop-color='rgba(228,228,231,1)' offset='1'/></radialGradient></defs></svg>"); }
+[data-palette="mono"] .sh-bg--dark { background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 1440 1024' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none'><rect x='0' y='0' height='100%' width='100%' fill='url(%23grad)' opacity='1'/><defs><radialGradient id='grad' gradientUnits='userSpaceOnUse' cx='0' cy='0' r='10' gradientTransform='matrix(72 -51.2 72 101.25 720 1024)'><stop stop-color='rgba(42,42,45,1)' offset='0'/><stop stop-color='rgba(12,12,13,1)' offset='1'/></radialGradient></defs></svg>"); }
+
+/* ── name + tagline float over the full-screen page ── */
+.sh-name {
+    position: absolute;
+    left: 28px;
+    top: 26px;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.1;
+    letter-spacing: 0.02em;
+    color: var(--sh-name);
+    z-index: 3;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* ── top-right corner (1:242) + sun (1:260) ── */
+.sh-corner {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: calc(215px * var(--kc, 1));
+    height: calc(215px * var(--kc, 1));
+    z-index: 2;
+    pointer-events: none;
+}
+.sh-corner-sun {
+    position: absolute;
+    display: block;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    top: 18px;
+    right: 24px;
+    width: 30px;
+    height: 30px;
+    color: var(--sh-sun);
+    z-index: 3;
+    transition: color 0.5s, transform 1.2s var(--ease-out);
+}
+[data-theme="dark"] .sh-corner-sun { transform: rotate(90deg) scale(0.86); }
+.sh-corner-sun svg { width: 100%; height: 100%; display: block; transition: transform 0.6s var(--ease-out); }
+.sh-corner-sun:hover svg { transform: rotate(45deg) scale(1.08); }
+.sh-corner-sun:focus-visible { outline: 2px solid var(--sh-ink-b); outline-offset: 4px; border-radius: 50%; }
+
+/* ── tagline (1:135) — gradient text, bottom 29px above the line, 26px from the right ── */
+.sh-tagline {
+    position: absolute;
+    right: 74px;
+    top: 26px;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.1;
+    white-space: nowrap;
+    background: linear-gradient(180deg, var(--sh-ink-a), var(--sh-ink-b));
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+    z-index: 2;
+}
+
+/* ── the content box — the only scroller ── */
+.sh-box {
+    position: absolute;
+    inset: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    z-index: 1;
+}
+.sh-box::-webkit-scrollbar { display: none; }
+.sh-box-content { position: relative; min-height: 100%; }
+
+/* ── nav panel (Frame 9 + Frame 11 + inner corners 1:304) ──
+   Positions are set by LiquidNav (GSAP). The panel shapes live in .sh-goo,
+   which runs through the #sh-goo SVG filter so they melt together like liquid
+   while the pill travels; icons and the pill sit on top, unfiltered. */
+.sh-nav {
+    position: absolute;
+    left: 20px;
+    top: 72px;
+    width: 61px;
+    z-index: 20;
+}
+.sh-goo-defs { position: absolute; width: 0; height: 0; }
+
+/* The goo layer is padded 30px (and wide on the right) so the blur has room to
+   spread; every shape inside is offset by that 30px, GSAP animates `top` from 0. */
+.sh-goo {
+    position: absolute;
+    left: -30px;
+    top: -30px;
+    width: 400px;
+    height: calc(100% + 60px);
+    filter: url(#sh-goo);
+    pointer-events: none;
+}
+.sh-goo > * { position: absolute; margin-top: 30px; top: 0; }
+.sh-nav-col {
+    left: 30px;
+    width: 61px;
+    border-radius: 16px;
+    background: var(--sh-panel);
+}
+.sh-nav-blob {
+    left: 31px;                                  /* Frame 9 sits 1px right of Frame 11 */
+    height: 54px;
+    border-radius: 16px;
+    background: var(--sh-panel);
+}
+.sh-nav-notch-wrap {
+    left: 91px;                                  /* 30 + the column's right edge (61) */
+    width: 13.333px;
+    height: 13.333px;
+    color: var(--sh-panel);
+}
+.sh-nav-notch-wrap { display: none; }   /* the inner corners joined the old frame */
+.sh-nav-notch--up { transform: scaleY(-1); }
+
+.sh-nav-pill {
+    position: absolute;
+    z-index: 2;
+    left: 1px;
+    padding: 8px;
+    width: max-content;
+    will-change: transform, top;
+}
+
+.sh-pill {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 10px;
+    border: 0;
+    border-radius: 12px;
+    /* soft lavender glow rising from the bottom, as in the mockup */
+    background:
+        radial-gradient(110% 95% at 50% 125%, var(--sh-pill-glow) 0%, transparent 70%),
+        linear-gradient(180deg, var(--sh-pill) 0%, var(--sh-pill-b) 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
+    font: 400 16px/1.1 var(--font-shell);
+    cursor: pointer;
+    transition: box-shadow 0.3s, transform 0.25s var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+}
+.sh-pill:hover { box-shadow: 0 4px 14px -6px rgba(58, 58, 119, 0.25); }
+.sh-pill:active { transform: scale(0.97); }
+.sh-pill:focus-visible, .sh-nav-btn:focus-visible { outline: 2px solid var(--sh-ink-b); outline-offset: 2px; }
+
+.sh-pill-bird { display: flex; align-items: center; justify-content: center; }
+.sh-pill-bird--l { width: 17.385px; height: 17.385px; }
+.sh-pill-bird--r { width: 13.895px; height: 13.895px; }
+.sh-pill-bird--l svg { width: 13.923px; height: 13.923px; transform: rotate(-17deg); transition: transform 0.5s var(--ease-out); }
+.sh-pill-bird--r svg { width: 11.255px; height: 11.255px; transform: rotate(15.8deg); transition: transform 0.5s var(--ease-out); }
+.sh-pill:hover .sh-pill-bird--l svg { transform: rotate(-24deg) translateY(-1px); }
+.sh-pill:hover .sh-pill-bird--r svg { transform: rotate(23deg) translateY(-1px); }
+
+.sh-pill-label {
+    display: block;
+    overflow: hidden;
+    padding: 0 1px;
+}
+.sh-pill-label span {
+    display: block;
+    white-space: nowrap;
+    background: linear-gradient(180deg, var(--sh-ink-a), var(--sh-ink-b));
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+}
+
+.sh-nav-btn {
+    position: absolute;
+    z-index: 1;
+    left: 20.5px;
+    display: flex;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--sh-icon);
+    cursor: pointer;
+    transition: color 0.25s;
+    -webkit-tap-highlight-color: transparent;
+}
+.sh-nav-btn:hover { color: var(--sh-ink-a); }
+.sh-nav-btn:hover svg { transform: scale(1.12); }
+.sh-nav-btn svg { transition: transform 0.35s var(--ease-out); }
+.sh-nav-btn svg { width: 20px; height: 20px; }
+
+/* ── halftone dome backdrop (Frame 10 / Ellipse 2), behind the archive ── */
+.dome-backdrop {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+.intro-dome {
+    position: absolute;
+    pointer-events: none;
+}
+.sh-dome {
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+}
+.sh-dome.is-ready { opacity: var(--sh-dots, 1); }
+.sh-dome--fallback { filter: blur(1.6px); }
+
+/* ── small screens ── */
+@media (max-width: 700px) {
+    .sh-pill { font-size: 14px; padding: 8px; }
+    .sh-tagline { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sh-pill-bird svg, .sh-nav-btn, .sh-corner-sun { transition: none; }
+}
+
+/* full-screen page: sections after the archive clear the floating nav + name */
+.sh-box-content .about, .sh-box-content .testimonials, .sh-box-content .contact {
+    padding-left: 128px;
+    padding-right: 48px;
+}
+@media (max-width: 700px) {
+    .sh-box-content .about, .sh-box-content .testimonials, .sh-box-content .contact { padding-left: 20px; padding-right: 20px; }
+}

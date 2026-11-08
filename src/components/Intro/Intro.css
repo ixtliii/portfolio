@@ -1,0 +1,147 @@
+/* ═══════════ INTRO / opening screen ═══════════ */
+
+.intro {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    display: grid;
+    place-items: center;
+    --intro-bg: 1;
+    font-family: var(--font-shell);
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+/* the backdrop is its own layer so it can fade while the mascot flies off */
+.intro::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 90% at 50% 100%, var(--sh-bg-a) 0%, var(--sh-bg-b) 100%);
+    opacity: var(--intro-bg);
+}
+.intro-defs { position: absolute; width: 0; height: 0; }
+
+.intro-stage {
+    position: relative;
+    will-change: transform;
+    width: min(380px, 74vw);
+    aspect-ratio: 1;
+    margin-top: 14vh;                       /* leave room for the bubble above */
+}
+
+.intro-avatar,
+.intro-fallback {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.intro-fallback {
+    inset: 22%;
+    width: auto;
+    height: auto;
+    border-radius: 48% 48% 44% 44%;
+    background: linear-gradient(160deg, #ffffff, #c9c9cd 60%, #8f8f95);
+    box-shadow: inset -10px -14px 30px rgba(255,255,255,0.5);
+}
+
+/* ── speech bubble: anchored to a point just above the head ── */
+.intro-bubble {
+    position: absolute;
+    left: 50%;
+    bottom: 93%;
+    width: 0;
+    height: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* the goo layer is big so the filter has room; shapes sit at its bottom-centre */
+.intro-goo {
+    position: absolute;
+    left: -240px;
+    bottom: -10px;
+    width: 480px;
+    height: 360px;
+    filter: url(#intro-goo);
+}
+.intro-bubble-body {
+    position: absolute;
+    left: 50%;
+    bottom: 40px;
+    width: 64px;
+    height: 48px;
+    transform: translateX(-50%);
+    border-radius: 22px;
+    background: linear-gradient(180deg, var(--sh-pill) 0%, var(--sh-pill-b) 100%);
+}
+.intro-tail {
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    width: 0;
+    height: 0;
+}
+.intro-tail i {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--sh-pill-b);
+}
+.intro-tail i:nth-child(1) { width: 22px; height: 22px; left: -15px; bottom: 22px; }
+.intro-tail i:nth-child(2) { width: 13px; height: 13px; left: -12px; bottom: 6px; }
+.intro-tail i:nth-child(3) { width: 7px;  height: 7px;  left: -8px;  bottom: -6px; }
+
+.intro-text,
+.intro-measure {
+    font-size: clamp(15px, 1.25vw, 18px);
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+    max-width: min(300px, 70vw);
+}
+.intro-text {
+    position: absolute;
+    left: 50%;
+    bottom: 54px;                            /* body bottom (40) + vertical padding (14) */
+    transform: translateX(-50%);
+    margin: 0;
+    text-align: center;
+    color: var(--sh-ink-a);
+}
+.intro-text span {
+    display: inline;
+    white-space: pre-wrap;
+    background: linear-gradient(180deg, var(--sh-ink-a), var(--sh-ink-b));
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+}
+.intro-measure {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    display: inline-block;
+    text-align: center;
+    white-space: normal;
+    visibility: hidden;
+}
+
+/* ── skip ── */
+.intro-skip {
+    position: absolute;
+    right: 28px;
+    bottom: 24px;
+    padding: 8px 14px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--sh-panel);
+    color: var(--sh-icon);
+    font: 400 13px/1 var(--font-shell);
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+}
+.intro-skip:hover { color: var(--sh-ink-a); background: var(--sh-pill); }
+.intro-skip:focus-visible { outline: 2px solid var(--sh-ink-b); outline-offset: 2px; }

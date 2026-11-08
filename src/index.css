@@ -1,18 +1,18 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #f0f0ee;
+  --bg: #eaf4fd;
   --bg-card: #ffffff;
-  --bg-2: #e8e8e6;
-  --border: rgba(0,0,0,0.055);
+  --bg-2: #dcebf8;
+  --border: rgba(30,50,90,0.07);
   --text-primary: #161616;
   --text-secondary: #686868;
-  --text-muted: #b0b0b0;
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03);
-  --shadow-md: 0 8px 24px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.03);
-  --shadow-lg: 0 16px 48px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.03);
-  --shadow-hover: 0 24px 64px rgba(0,0,0,0.09), 0 6px 16px rgba(0,0,0,0.04);
+  --text-muted: #a9b1bd;
+  --shadow-xs: 0 1px 2px rgba(20,40,80,0.04);
+  --shadow-sm: 0 2px 8px rgba(20,40,80,0.05), 0 1px 2px rgba(20,40,80,0.03);
+  --shadow-md: 0 8px 24px rgba(20,40,80,0.06), 0 2px 6px rgba(20,40,80,0.03);
+  --shadow-lg: 0 16px 48px rgba(20,40,80,0.07), 0 4px 12px rgba(20,40,80,0.03);
+  --shadow-hover: 0 24px 64px rgba(20,40,80,0.09), 0 6px 16px rgba(20,40,80,0.04);
   --radius-sm: 10px;
   --radius: 16px;
   --radius-lg: 20px;
@@ -20,11 +20,126 @@
   --radius-full: 100px;
   --font-display: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  --font-shell: 'Atkinson Hyperlegible Mono', 'JetBrains Mono', ui-monospace, monospace;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --transition: 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* shell (Figma: Desktop - 2) */
+  --sh-bg-a: #ffffff;
+  --sh-bg-b: #bcd7ec;
+  --sh-block: #dbefff;
+  --sh-line: #f0f8fe;
+  --sh-panel: #eff8ff;
+  --sh-pill: #ffffff;
+  --sh-pill-b: #f8f8fc;
+  --sh-pill-glow: #e4e1f0;
+  --sh-ink-a: #3a3a77;
+  --sh-ink-b: #7798c3;
+  --sh-name: #7c7c97;
+  --sh-icon: #878799;
+  --sh-corner-a: #f0f8fe;
+  --sh-corner-b: #abd6f5;
+  --sh-sun: #ffffff;
+  --sh-dots: 1;
+  --ax-fog: #dceaf6;          /* archive cards fade into the shell background */
 }
 
-html { scroll-behavior: smooth; }
+/* ── dark theme (sun toggle in the nav) ── */
+[data-theme="dark"] {
+  --bg: #0e1424;
+  --bg-card: #161e33;
+  --bg-2: #1b2440;
+  --border: rgba(255,255,255,0.07);
+  --text-primary: #e8edf8;
+  --text-secondary: #9ca6bf;
+  --text-muted: #5d6781;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.25);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.35), 0 2px 6px rgba(0,0,0,0.25);
+  --shadow-lg: 0 16px 48px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.25);
+  --shadow-hover: 0 24px 64px rgba(0,0,0,0.45), 0 6px 16px rgba(0,0,0,0.3);
+
+  --sh-bg-a: #1c2742;
+  --sh-bg-b: #0a0f1d;
+  --sh-block: #0f1629;
+  --sh-line: #1d2944;
+  --sh-panel: #141c31;
+  --sh-pill: #26345a;
+  --sh-pill-b: #1f2a48;
+  --sh-pill-glow: #3a4675;
+  --sh-ink-a: #e3e9ff;
+  --sh-ink-b: #8ea4d8;
+  --sh-name: #7c86a6;
+  --sh-icon: #8b95b3;
+  --sh-corner-a: #18223b;
+  --sh-corner-b: #2c4a7e;
+  --sh-sun: #ffe6a8;
+  --sh-dots: 0.2;
+  --ax-fog: #0f1729;
+  color-scheme: dark;
+}
+
+/* ── Mono palette (palette switch): greys and soft blacks ── */
+[data-palette="mono"] {
+  --bg: #ededee;
+  --bg-2: #e2e2e4;
+  --text-primary: #161617;
+  --text-secondary: #6a6a6f;
+  --text-muted: #a9a9ae;
+
+  --sh-bg-a: #ffffff;
+  --sh-bg-b: #e4e4e7;
+  --sh-block: #e6e6e8;
+  --sh-line: #f5f5f6;
+  --sh-panel: #f1f1f2;
+  --sh-pill: #ffffff;
+  --sh-pill-b: #f7f7f8;
+  --sh-pill-glow: #e2e2e5;
+  --sh-ink-a: #1a1a1c;
+  --sh-ink-b: #6e6e74;
+  --sh-name: #7e7e84;
+  --sh-icon: #85858b;
+  --sh-corner-a: #f5f5f6;
+  --sh-corner-b: #c4c4c8;
+  --sh-sun: #ffffff;
+  --ax-fog: #e6e6e8;
+  --ax-mono: 1;
+}
+[data-palette="mono"][data-theme="dark"] {
+  --bg: #111112;
+  --bg-card: #1a1a1b;
+  --bg-2: #1f1f21;
+  --text-primary: #ececed;
+  --text-secondary: #9c9ca2;
+  --text-muted: #5f5f65;
+
+  --sh-bg-a: #2a2a2d;
+  --sh-bg-b: #0c0c0d;
+  --sh-block: #131314;
+  --sh-line: #222224;
+  --sh-panel: #1a1a1c;
+  --sh-pill: #2c2c2f;
+  --sh-pill-b: #232325;
+  --sh-pill-glow: #3b3b3f;
+  --sh-ink-a: #f3f3f4;
+  --sh-ink-b: #9a9aa0;
+  --sh-name: #7a7a80;
+  --sh-icon: #8c8c92;
+  --sh-corner-a: #1b1b1d;
+  --sh-corner-b: #3b3b3f;
+  --sh-sun: #f2f2f2;
+  --sh-dots: 0.14;
+  --ax-fog: #141415;
+}
+
+/* colour cross-fade while the theme switches */
+html.theme-anim *, html.theme-anim *::before, html.theme-anim *::after {
+  transition: background-color 0.45s ease, color 0.45s ease, border-color 0.45s ease, fill 0.45s ease, stop-color 0.45s ease !important;
+}
+
+/* no global smooth-scroll: it fights GSAP ScrollTrigger (archive). Links scroll smoothly via JS. */
+
+html, body { height: 100%; overflow: hidden; }
 
 body {
   background: var(--bg);
@@ -40,7 +155,7 @@ body {
 
 a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; }
-::selection { background: #161616; color: #fff; }
+::selection { background: var(--text-primary); color: var(--bg); }
 ::-webkit-scrollbar { width: 3px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
@@ -146,4 +261,19 @@ img { display: block; max-width: 100%; }
   text-transform: uppercase;
   white-space: nowrap;
   padding-bottom: 6px;
+}
+
+/* ── Lenis smooth scroll ── */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* visually hidden, still read by screen readers */
+.sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
 }

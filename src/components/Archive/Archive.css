@@ -1,0 +1,124 @@
+/* ═══════════ THE ARCHIVE — WebGL track + HTML overlay ═══════════
+   Colours come from the global tokens in index.css, so a dark
+   theme only needs to swap those variables.                    */
+
+.ax { position: relative; }
+
+.ax-sticky {
+    position: sticky;
+    top: 0;
+    height: var(--box-h, 100vh);
+    overflow: hidden;
+    /* transparent: the archive sits straight on the shell background */
+}
+
+/* ── WebGL stage ── */
+.ax-stage {
+    position: absolute;
+    inset: 0;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: grab;
+}
+.ax-stage.is-dragging { cursor: grabbing; }
+@media (pointer: fine) { .ax-stage { cursor: none; } }
+
+.ax-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* ── custom cursor (same language as Antwerp Unseen) ── */
+.ax-cursor-wrap {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    pointer-events: none;
+}
+.ax-cursor {
+    width: 46px;
+    height: 46px;
+    margin: -23px 0 0 -23px;
+    border-radius: 50%;
+    background: #111112;            /* black by default */
+    color: #fff;
+    box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(0.18);
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.ax-cursor svg { opacity: 0; transition: opacity 0.2s; }
+.ax-cursor.is-on { transform: scale(1); }
+.ax-cursor.is-on svg { opacity: 1; }
+/* dark theme: flip to white so it stays visible */
+[data-theme="dark"] .ax-cursor { background: #f2f2f3; color: #111112; }
+@media (pointer: coarse) { .ax-cursor-wrap { display: none; } }
+
+/* ── progress line (the only overlay) ── */
+.ax-progress {
+    position: absolute;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%);
+    width: clamp(10rem, 22%, 18rem);
+    height: 1px;
+    background: color-mix(in srgb, var(--sh-ink-a) 14%, transparent);
+    pointer-events: none;
+}
+.ax-progress span {
+    display: block;
+    height: 100%;
+    background: var(--sh-ink-b);
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+}
+
+/* name of the selected project, positioned under its block by the render loop */
+.ax-name-tag {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font: 400 15px/1.1 var(--font-shell);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
+.ax-name-title {
+    background: linear-gradient(180deg, var(--sh-ink-a), var(--sh-ink-b));
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+}
+.ax-tags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.ax-tag {
+    padding: 5px 10px;
+    border-radius: 999px;
+    background: var(--sh-panel);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    color: var(--sh-ink-b);
+    font-size: 11px;
+    letter-spacing: 0.03em;
+    animation: ax-tag-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--k) * 70ms + 150ms);
+}
+@keyframes ax-tag-in {
+    from { opacity: 0; transform: translateY(6px) scale(0.92); filter: blur(3px); }
+    to   { opacity: 1; transform: none; filter: none; }
+}
+@media (prefers-reduced-motion: reduce) { .ax-tag { animation: none; } }
