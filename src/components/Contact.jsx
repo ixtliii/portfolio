@@ -9,7 +9,7 @@ const LINKS = [
   { label: 'Email', value: 'artem.diakunchak.work@gmail.com', href: 'mailto:artem.diakunchak.work@gmail.com' },
   { label: 'LinkedIn', value: 'linkedin.com/in/artem-diakunchak', href: 'https://www.linkedin.com/in/artem-diakunchak-b6142123b/' },
   { label: 'Behance', value: 'behance.net/artemdiakunchak', href: 'https://www.behance.net/artemdiakunchak' },
-  { label: 'Résumé', value: 'Download CV (PDF)', href: `${import.meta.env.BASE_URL}Artem_Diakunchak-CV.pdf`, download: 'Artem Diakunchak — CV.pdf' },
+  { label: 'Résumé', value: 'Download CV (PDF)', href: `${import.meta.env.BASE_URL}Artem_Diakunchak-CV.pdf`, download: 'Artem Diakunchak - CV.pdf' },
 ]
 
 export default function Contact() {
@@ -50,7 +50,7 @@ export default function Contact() {
       <div className="contact-inner">
 
         <div className="contact-top">
-          <span className="mono contact-label">06 — Contact</span>
+          <span className="mono contact-label">06 - Contact</span>
           <span className="mono contact-label">Open to work</span>
         </div>
 
@@ -73,7 +73,7 @@ export default function Contact() {
         </div>
 
         <footer className="footer">
-          <span className="mono">Artem Diakunchak — Product Designer</span>
+          <span className="mono">Artem Diakunchak - Product Designer</span>
           <span className="mono">Designed & built by me · © 2026</span>
         </footer>
 

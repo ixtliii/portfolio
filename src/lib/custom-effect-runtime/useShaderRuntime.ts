@@ -270,7 +270,7 @@ export function useShaderRuntime({
           effect.render(runtime.gpu.device, runtime.getShaderState(idx))
         })
       } catch (e) {
-        // Render-path failures are treated as transient — e.g. "No cached paint record
+        // Render-path failures are treated as transient - e.g. "No cached paint record
         // for element" on the very first paint before the browser has produced a paint
         // record for the content subtree, or a briefly detached element. The next paint
         // typically succeeds, so we log and continue rather than latching the error.
@@ -322,7 +322,7 @@ export function useShaderRuntime({
       canvas.height = size.height
       // RENDER_ATTACHMENT is mandatory on the destination of
       // HTML-in-Canvas in Chrome's implementation. Without it,
-      // the call doesn't throw but silently writes nothing — the texture
+      // the call doesn't throw but silently writes nothing - the texture
       // stays zeroed. (Dawn emits "Destination texture needs to have CopyDst
       // and RenderAttachment usage." as a warning, but no exception.)
 

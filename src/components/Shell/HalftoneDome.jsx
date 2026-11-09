@@ -11,8 +11,8 @@ import {
    The halftone dome from the Figma frame (Ellipse 2, 1:253):
    a 1488px circle filled with a hexagonal grid of white dots
    (Ellipse 1, 1:252, as a pattern fill), run through the two
-   shader effects authored in Figma — Lens distortion, then
-   Bokeh blur — with the exact parameters from the file.
+   shader effects authored in Figma - Lens distortion, then
+   Bokeh blur - with the exact parameters from the file.
 
    Browsers with HTML-in-Canvas use Figma's <ShaderEffect>
    runtime as-is. Everyone else (that's almost every browser
@@ -134,7 +134,7 @@ function ImageShaderCanvas({ size, className, onReady, onFail }) {
                     const k = 255 / a
                     px[d] = raw[o] * k; px[d + 1] = raw[o + 1] * k; px[d + 2] = raw[o + 2] * k
                     // Figma's renderer shows this layer at 1−(1−α)² (measured against the
-                    // frame's own render at five points) — match it
+                    // frame's own render at five points) - match it
                     const f = a / 255
                     px[d + 3] = 255 * (1 - (1 - f) * (1 - f))
                 }

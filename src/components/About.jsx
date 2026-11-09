@@ -12,7 +12,7 @@ const SKILLS = [
 ]
 
 const EXPERIENCE = [
-  { year: '2026 –', role: 'Product Designer', company: 'Mayten Technologies' },
+  { year: '2026 -', role: 'Product Designer', company: 'Mayten Technologies' },
   { year: '2025', role: 'UX/UI Designer', company: 'MarketEcho' },
   { year: '2024', role: 'Web Designer', company: 'Carnivale' },
 ]
@@ -47,8 +47,8 @@ export default function About() {
       <div className="about-grid">
         <div ref={leftRef} className="about-card">
           <p className="about-bio">I'm a product designer with a hybrid design and development background, currently finishing my bachelor's in Digital Experience Design at Howest.</p>
-          <p className="about-bio">I've shipped real products — a 50+ component design system for a startup MVP, a full legacy app redesign deployed to 60+ regions, and a phygital street installation built with React, Three.js, and real-time data.</p>
-          <p className="about-bio">I care about the gap between design and engineering. I work best at the intersection — thinking in systems, building in code, designing with technical constraints in mind from day one.</p>
+          <p className="about-bio">I've shipped real products - a 50+ component design system for a startup MVP, a full legacy app redesign deployed to 60+ regions, and a phygital street installation built with React, Three.js, and real-time data.</p>
+          <p className="about-bio">I care about the gap between design and engineering. I work best at the intersection - thinking in systems, building in code, designing with technical constraints in mind from day one.</p>
 
           <div className="about-experience">
             <span className="about-label">Experience</span>

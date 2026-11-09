@@ -16,15 +16,15 @@ if (import.meta.env.DEV && typeof window !== 'undefined') window.__gsap = gsap  
    mascot rendered as dot-matrix art over a living, dithered
    gradient, numbered like an edition. It tilts in 3D with the
    pointer. On send the card itself flies into the helper's
-   mouth and gets eaten — and the next card rises up with a
+   mouth and gets eaten - and the next card rises up with a
    new gradient and a new face.
    ───────────────────────────────────────────────────────── */
 
 const CARDS = [
-    { grad: ['#f1fff4', '#b6ebc6', '#62b884'], face: { happy: 0, open: 1.05, tilt: 0 }, title: 'Say hi.', line: 'A direct line to Artem' },
-    { grad: ['#f9f2ff', '#d4c0ff', '#8e72dc'], face: { happy: 1, open: 1, tilt: 0 }, title: 'Another one?', line: 'He reads every single one' },
+    { grad: ['#f1fff4', '#b6ebc6', '#62b884'], face: { happy: 0, open: 1.05, tilt: 0 }, title: 'Say hi.', line: 'A direct line to me' },
+    { grad: ['#f9f2ff', '#d4c0ff', '#8e72dc'], face: { happy: 1, open: 1, tilt: 0 }, title: 'Another one?', line: 'I read every single one' },
     { grad: ['#fff6ec', '#ffcca3', '#e3875a'], face: { happy: 0, open: 1.32, tilt: -0.35 }, title: 'Oh, hello again.', line: 'Third time’s the charm' },
-    { grad: ['#f0f9ff', '#b3dcff', '#6399e0'], face: { happy: 0, open: 0.82, tilt: 0.45 }, title: 'Still curious?', line: 'Ask him anything' },
+    { grad: ['#f0f9ff', '#b3dcff', '#6399e0'], face: { happy: 0, open: 0.82, tilt: 0.45 }, title: 'Still curious?', line: 'Ask me anything' },
 ]
 const CELL = 7                       // px per dot
 const KEY = 'ad-sent'
@@ -225,7 +225,7 @@ export default function ContactCard() {
 
         const r = await send
         if (!r.ok) {
-            window.dispatchEvent(new CustomEvent('helper:say', { detail: { text: "Hmm, that one didn't go through. Try again, or write to artem.diakunchak.work@gmail.com" } }))
+            window.dispatchEvent(new CustomEvent('helper:say', { detail: { text: "Hmm, that one didn't go through. Try again, or write to me at artem.diakunchak.work@gmail.com" } }))
             gsap.set(cardRef.current, { x: 0, y: 0, rotation: 0, rotationY: 0 })
             gsap.fromTo(cardRef.current, { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: 'elastic.out(1, 0.7)' })
             gsap.to(rootRef.current.querySelector('.ct-close'), { opacity: 1, scale: 1, duration: 0.3 })
@@ -274,7 +274,7 @@ export default function ContactCard() {
                             <h2 className="ct-title">{card.title}</h2>
                             <p className="ct-meta">
                                 <span className="ct-dot" aria-hidden />
-                                <span>{err || `${card.line} · usually replies within a day`}</span>
+                                <span>{err || `${card.line} · I usually reply within a day`}</span>
                             </p>
 
                             <div className="ct-fields" ref={fieldsRef}>

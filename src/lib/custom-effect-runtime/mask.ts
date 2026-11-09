@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react'
 function extractRawMaskUrl(maskUrl: string): string | null {
   const trimmed = maskUrl.trim()
 
-  // Already a plain URL / data URI — no url() wrapper
+  // Already a plain URL / data URI - no url() wrapper
   if (!trimmed.startsWith('url(')) {
     return trimmed
   }
 
-  // Strip url( ... ) — last ) is the wrapper, not part of the value
+  // Strip url( ... ) - last ) is the wrapper, not part of the value
   const inner = trimmed.slice(4, -1).trim()
 
   // Strip optional surrounding quotes (single or double)

@@ -5,12 +5,12 @@ import { maxDpr } from '../../lib/perf'
 // ray-marched in a single fragment shader (plain WebGL, no deps).
 //
 // Controls (all smoothed in JS, see createAvatar().state):
-//   look   – where the eyes/face point (-1…1)
-//   talk   – syllable pulse: the eyes bounce when it "speaks" (0…1)
-//   blink  – eyelid closure (0…1)
-//   squash – body squash/stretch (-1…1)
-//   hop    – vertical bounce
-//   reveal – 0 = dissolved into glitchy pixels, 1 = fully there
+//   look   - where the eyes/face point (-1…1)
+//   talk   - syllable pulse: the eyes bounce when it "speaks" (0…1)
+//   blink  - eyelid closure (0…1)
+//   squash - body squash/stretch (-1…1)
+//   hop    - vertical bounce
+//   reveal - 0 = dissolved into glitchy pixels, 1 = fully there
 // ─────────────────────────────────────────────────────────
 
 const VERT = `
@@ -111,7 +111,7 @@ float bayer2(vec2 a) { a = floor(a); return fract(dot(a, vec2(0.5, a.y * 0.75)))
 float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
 
 // studio environment the chrome reflects: bright sky with soft-boxes,
-// a dark horizon line, a darker floor — lightly tinted by the palette
+// a dark horizon line, a darker floor - lightly tinted by the palette
 vec3 floorTone() { return mix(vec3(0.58, 0.58, 0.6), uC, 0.25); }
 
 vec3 env(vec3 d) {
@@ -201,7 +201,7 @@ vec4 shade(vec2 frag) {
         env(normalize(rr + n * disp)).r,
         env(rr).g,
         env(normalize(rr - n * disp)).b);
-    // refraction: a glimpse "through" the metal — the bent environment, split into rainbow
+    // refraction: a glimpse "through" the metal - the bent environment, split into rainbow
     vec3 rf = vec3(
         env(refract(rd, n, 0.70)).r,
         env(refract(rd, n, 0.74)).g,
@@ -372,7 +372,16 @@ export function createAvatar(canvas, palette, opts = {}) {
         mouth: 0, mouthT: 0,
     }
 
+    // canvas size is read only when it actually changes (reading clientWidth every
+    // frame forces a layout while other animations are writing styles)
+    let sizeDirty = true, onScreen = true
+    const ro = new ResizeObserver(() => { sizeDirty = true })
+    ro.observe(canvas)
+    const io = new IntersectionObserver(([e]) => { onScreen = e.isIntersecting })
+    io.observe(canvas)
     const resize = () => {
+        if (!sizeDirty) return
+        sizeDirty = false
         const dpr = maxDpr()
         const w = opts.cell ? Math.max(1, Math.round(canvas.clientWidth / opts.cell)) : Math.round(canvas.clientWidth * dpr)
         const h = opts.cell ? Math.max(1, Math.round(canvas.clientHeight / opts.cell)) : Math.round(canvas.clientHeight * dpr)
@@ -414,6 +423,7 @@ export function createAvatar(canvas, palette, opts = {}) {
             state.hopV = 0
         }
 
+        if (!onScreen || document.hidden) { raf = requestAnimationFrame(frame); return }
         resize()
         gl.uniform1f(U.uTime, t)
         gl.uniform2f(U.uLook, state.look.x, state.look.y)
@@ -454,6 +464,7 @@ export function createAvatar(canvas, palette, opts = {}) {
         express({ happy = 0, open = 1, tilt = 0 } = {}) { state.happyT = happy; state.openT = open; state.tiltT = tilt },
         destroy() {
             cancelAnimationFrame(raf)
+            ro.disconnect(); io.disconnect()
             gl.deleteBuffer(buf)
             gl.deleteProgram(prog)
             // (don't lose the context: React may remount on the same canvas)

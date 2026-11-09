@@ -5,11 +5,12 @@ import { createAvatar } from '../Intro/avatar'
 import { avatarPalette, helperBox } from '../Intro/avatarColors'
 import { useTheme } from '../../lib/theme'
 import { scrollToY, scrollToEl } from '../../lib/scroll'
+import { GUIDE } from '../../pages/about/content'
 import { goTo } from '../../lib/transition'
 import { openContact } from '../../lib/contact'
 import { isTouch } from '../../lib/perf'
-import HelperNav, { NextIcon, PrevIcon, OpenIcon, FirstIcon, TopIcon, MoonIcon, DownloadIcon, CloseIcon, ClearIcon } from './HelperNav'
-import { WorksIcon, MailIcon, SunIcon, AboutIcon } from '../Shell/icons'
+import HelperNav, { NextIcon, PrevIcon, OpenIcon, FirstIcon, TopIcon, MoonIcon, DownloadIcon, CloseIcon, ClearIcon, HomeIcon, ArchiveIcon } from './HelperNav'
+import { MailIcon, SunIcon } from '../Shell/icons'
 import './Helper.css'
 
 /* ─────────────────────────────────────────────────────────
@@ -27,7 +28,6 @@ import './Helper.css'
 
 const VOWEL = /[aeiouy]/i
 const CV = `${import.meta.env.BASE_URL}Artem_Diakunchak-CV.pdf`
-const ABOUT = "I'm Artem, a product designer who also builds. I've shipped a 50+ component design system, an app redesign in 60+ regions and a Three.js street installation."
 
 // a full turn around its own axis
 const twirl = (av) => av && gsap.fromTo(av.state, { spin: 0 }, { spin: Math.PI * 2, duration: 1.1, ease: 'power2.inOut', overwrite: true })
@@ -50,7 +50,9 @@ export default function Helper({ arrived = false, visible = true }) {
 
     const { theme, toggle } = useTheme()
     const location = useLocation()
-    const onHome = location.pathname === '/'
+    // the archive (/work) has its own project menu; the home page is the about story
+    const onHome = location.pathname === '/work'
+    const onAbout = location.pathname === '/'
 
     // ── the avatar
     useEffect(() => {
@@ -109,9 +111,9 @@ export default function Helper({ arrived = false, visible = true }) {
     // ── hints
     useEffect(() => {
         if (!visible) return
-        const t = setTimeout(() => say(onHome ? `${isTouch() ? 'Swipe' : 'Scroll'} to browse my work. ${isTouch() ? 'Tap' : 'Click'} me if you need a hand.` : `${isTouch() ? 'Tap' : 'Click'} me to get back to the work.`, { hold: 5 }), arrived ? 900 : 1600)
+        const t = setTimeout(() => say(onHome ? `${isTouch() ? 'Swipe' : 'Scroll'} to browse my work. ${isTouch() ? 'Tap' : 'Click'} me if you need a hand.` : onAbout ? GUIDE.hello : `${isTouch() ? 'Tap' : 'Click'} me to get back to the work.`, { hold: 5 }), arrived ? 900 : 1600)
         return () => clearTimeout(t)
-    }, [visible, onHome, arrived, say])
+    }, [visible, onHome, onAbout, arrived, say])
 
     useEffect(() => {
         const onProject = (e) => {
@@ -148,7 +150,7 @@ export default function Helper({ arrived = false, visible = true }) {
     useEffect(() => {
         const timers = []
         const later = (fn, ms) => timers.push(setTimeout(fn, ms))
-        const onOpen = () => later(() => say('Write him something nice. I’ll deliver it.', { hold: 3.6, look: { x: -0.6, y: 0.5 } }), 1300)
+        const onOpen = () => later(() => say('Write me something nice. I read every one.', { hold: 3.6, look: { x: -0.6, y: 0.5 } }), 1300)
         const onStart = () => {
             const av = avatarRef.current
             if (!av) return
@@ -169,7 +171,7 @@ export default function Helper({ arrived = false, visible = true }) {
             later(() => { av.mouth(0); av.boop() }, 380)
             later(() => { av.mouth(0.35) }, 560)
             later(() => { av.mouth(0); av.express({ happy: 1 }); av.hop(0.9); twirl(av) }, 720)
-            later(() => say('Yum! Delivered straight to Artem.', { hold: 3, look: { x: -0.5, y: 0.4 } }), 1100)
+            later(() => say('Yum! Got it. I’ll write back soon.', { hold: 3, look: { x: -0.5, y: 0.4 } }), 1100)
             later(() => { av.express({}); av.__hold = false }, 4200)
         }
         const onSay = (e) => say(e.detail?.text || '', { hold: 3.5 })
@@ -227,6 +229,13 @@ export default function Helper({ arrived = false, visible = true }) {
         return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('pointerdown', onDown) }
     }, [open, close])
 
+    const aboutRef = useRef(null)
+    useEffect(() => {
+        const onAbout = () => aboutRef.current?.()
+        window.addEventListener('helper:about', onAbout)
+        return () => window.removeEventListener('helper:about', onAbout)
+    }, [])
+
     const act = (fn, reply, hold = 2.4) => () => {
         fn()
         setOpen(false)
@@ -238,14 +247,17 @@ export default function Helper({ arrived = false, visible = true }) {
     }
     const go = (to) => window.dispatchEvent(new CustomEvent('helper:go', { detail: { to } }))
 
-    // other pages: about (told by the mascot until the About page is back), contact, CV
-    const about = { Icon: AboutIcon, label: 'About me', run: act(() => {}, ABOUT, 9) }
+    // other pages: the archive, home (about), contact, CV
+    const about = !onAbout && { Icon: HomeIcon, label: 'Home', run: act(() => goTo('/')) }
+    // the archive's end button asks for the same thing
+    aboutRef.current = about ? about.run : null
+    const allWork = !onHome && { Icon: ArchiveIcon, label: 'All work', run: act(() => goTo('/work')) }
     const contact = { Icon: MailIcon, label: 'Contact me', run: act(openContact) }
-    const cv = { Icon: DownloadIcon, label: 'Download CV', href: CV, download: 'Artem Diakunchak — CV.pdf' }
+    const cv = { Icon: DownloadIcon, label: 'Download CV', href: CV, download: 'Artem Diakunchak - CV.pdf' }
     const lights = { Icon: theme === 'dark' ? SunIcon : MoonIcon, label: theme === 'dark' ? 'Lights on' : 'Lights off', run: act(toggle, theme === 'dark' ? 'Much better.' : 'Cosy.') }
 
     const nextSection = () => {
-        const hs = Array.from(document.querySelectorAll('.cs-content h1[id], .cs-content h2[id]'))
+        const hs = Array.from(document.querySelectorAll(onAbout ? '[data-chapter]' : '.cs-content h1[id], .cs-content h2[id]'))
         const h = hs.find(el => el.getBoundingClientRect().top > 90)
         if (h) scrollToEl(h, { offset: -24, duration: 1.1 })
     }
@@ -253,10 +265,10 @@ export default function Helper({ arrived = false, visible = true }) {
     const groups = (inContact
         ? [
             { label: 'This card', items: [
-                { Icon: CloseIcon, label: onHome ? 'Back to the work' : 'Back to the case study', run: act(() => window.dispatchEvent(new CustomEvent('contact:close'))) },
+                { Icon: onHome ? ArchiveIcon : onAbout ? HomeIcon : CloseIcon, label: onHome ? 'Back to the work' : onAbout ? 'Back to home' : 'Back to the case study', run: act(() => window.dispatchEvent(new CustomEvent('contact:close'))) },
                 { Icon: ClearIcon, label: 'Clear the form', run: act(() => window.dispatchEvent(new CustomEvent('contact:clear')), 'Fresh start.') },
             ] },
-            { label: 'Other pages', items: [about, cv] },
+            { label: 'Other pages', items: [about, allWork, cv] },
             { label: 'Display', items: [lights] },
         ]
         : onHome
@@ -272,10 +284,10 @@ export default function Helper({ arrived = false, visible = true }) {
         ]
         : [
             { label: 'This page', items: [
-                { Icon: NextIcon, label: 'Next section', run: act(nextSection) },
+                { Icon: NextIcon, label: onAbout ? 'Next chapter' : 'Next section', run: act(nextSection) },
                 { Icon: TopIcon, label: 'Back to top', run: act(() => scrollToY(0, { duration: 1.2 })) },
             ] },
-            { label: 'Other pages', items: [{ Icon: WorksIcon, label: 'All work', run: act(() => goTo('/')) }, about, contact, cv] },
+            { label: 'Other pages', items: [about, allWork, contact, cv] },
             { label: 'Display', items: [lights] },
         ]
     ).map(g => ({ ...g, items: g.items.filter(Boolean) })).filter(g => g.items.length)

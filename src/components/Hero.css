@@ -67,7 +67,7 @@
 
 .hl-dot { color: var(--text-muted); }
 
-/* ── Aside — bottom-aligned with headline baseline ── */
+/* ── Aside - bottom-aligned with headline baseline ── */
 .hero-aside {
     position: relative;
     z-index: 1;
@@ -77,7 +77,7 @@
     padding-bottom: 6px;   /* optical alignment with headline baseline */
 }
 
-/* Barely-there frosted wash behind the aside copy — heavy blur so it
+/* Barely-there frosted wash behind the aside copy - heavy blur so it
    just softens the shader and nudges text legibility, without reading
    as a visible "card" */
 .hero-aside::before {
