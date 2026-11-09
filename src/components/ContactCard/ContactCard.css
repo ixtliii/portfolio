@@ -185,7 +185,7 @@
     filter: blur(0.5px) drop-shadow(0 0 4px rgba(255, 255, 255, 0.55));
     transition: opacity 0.4s, filter 0.4s;
 }
-/* big dots hug the ends, small dots reach further in — a halftone fade */
+/* big dots hug the ends, small dots reach further in - a halftone fade */
 .ct-send-dots--big {
     background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0 var(--ct-big), transparent calc(var(--ct-big) + 0.6px)) 0 0 / 8px 8px;
     -webkit-mask: linear-gradient(90deg, #000 0%, transparent 18%, transparent 82%, #000 100%);
@@ -197,7 +197,7 @@
             mask: linear-gradient(90deg, transparent 4%, #000 14%, transparent 34%, transparent 66%, #000 86%, transparent 96%);
     opacity: 0.8;
 }
-/* hover: the dots breathe — big and small out of phase, so it ripples */
+/* hover: the dots breathe - big and small out of phase, so it ripples */
 .ct-send:hover .ct-send-dots--big { animation: ct-pulse-big 1.1s ease-in-out infinite; }
 .ct-send:hover .ct-send-dots--small { animation: ct-pulse-small 1.1s ease-in-out 0.28s infinite; }
 @keyframes ct-pulse-big {

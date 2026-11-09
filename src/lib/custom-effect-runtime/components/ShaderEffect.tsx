@@ -25,7 +25,7 @@ export function ShaderEffect({
   const { error } = useShaderRuntime({ canvas, shaders, hasChildren, contentRef })
   const processedMask = useProcessMaskUrl(mask)
 
-  // Stable ref callback — an inline arrow would re-bind every render, which can cause
+  // Stable ref callback - an inline arrow would re-bind every render, which can cause
   // React to call the callback with null then with the canvas on each commit, tearing
   // down and re-acquiring the WebGPU device.
   const canvasRef = useCallback((ref: HTMLCanvasElement | null) => {

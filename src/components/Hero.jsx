@@ -89,7 +89,7 @@ export default function Hero() {
 
                 <div ref={asideRef} className="hero-aside">
                     <p className="hero-aside-text">
-                        Hybrid product designer & front-end developer based in Belgium — working
+                        Hybrid product designer & front-end developer based in Belgium - working
                         at the intersection of design systems and shipped code.
                     </p>
                     <div className="hero-aside-actions">
@@ -99,7 +99,7 @@ export default function Hero() {
                                 <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                             </svg>
                         </a>
-                        <a href={`${import.meta.env.BASE_URL}Artem_Diakunchak-CV.pdf`} className="btn-secondary" download="Artem Diakunchak — CV.pdf">Résumé ↓</a>
+                        <a href={`${import.meta.env.BASE_URL}Artem_Diakunchak-CV.pdf`} className="btn-secondary" download="Artem Diakunchak - CV.pdf">Résumé ↓</a>
                     </div>
                 </div>
             </div>
@@ -111,7 +111,7 @@ export default function Hero() {
           Open to work
         </span>
                 <span className="hero-meta-sep" />
-                <span className="hero-meta-item mono">Belgium — 51.05°N, 3.72°E</span>
+                <span className="hero-meta-item mono">Belgium - 51.05°N, 3.72°E</span>
                 <span className="hero-meta-fill" />
                 <span className="hero-meta-item mono">{clock} CET</span>
                 <span className="hero-meta-sep" />

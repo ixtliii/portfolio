@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────
-// THE ARCHIVE — WebGL scene (three.js)
+// THE ARCHIVE - WebGL scene (three.js)
 //
 // Cards ride a track that winds away from the camera: it
 // swings left/right, rises and sinks into the distance, so
@@ -14,11 +14,18 @@
 //   • rounded corners (SDF), real geometry bend + idle ripple
 // ─────────────────────────────────────────────────────────
 import * as THREE from 'three'
-import { isTouch, maxDpr } from '../../lib/perf'
+import { isTouch, isSmall } from '../../lib/perf'
 
-export const CARD_W = 2
-export const CARD_H = 1.36
-const FLOOR_Y = -CARD_H / 2
+// block size: landscape on desktop, taller portrait blocks on phones (set per scene)
+export let CARD_W = 2
+export let CARD_H = 1.36
+let FLOOR_Y = -CARD_H / 2
+function setDims(portrait) {
+    CARD_W = portrait ? 1.6 : 2
+    CARD_H = portrait ? 2.06 : 1.36
+    CARD_D = portrait ? 0.72 : 0.82
+    FLOOR_Y = -CARD_H / 2
+}
 
 // track spacing (world units along the track)
 export const BASE = 0.78           // scale of the blocks that aren't selected
@@ -28,7 +35,7 @@ export const GROW = 0.84           // active card scale bonus
 
 // ── the path: s = distance along the track (0 = focal point) ──
 // One wide, even arc (a slice of a circle) that curves away on both sides of the
-// focal point — upcoming projects sweep off to the right, passed ones trail off left.
+// focal point - upcoming projects sweep off to the right, passed ones trail off left.
 const ARC_R = 8.5
 export function trackPoint(s, out = new THREE.Vector3()) {
     // the circle is tilted back ~50°, so both arms rise as they curve away (a sweeping U)
@@ -39,10 +46,10 @@ export function trackPoint(s, out = new THREE.Vector3()) {
 
 // ── shaders ──
 // Block depth and corner radius (the cards are soft, rounded 3D blocks)
-export const CARD_D = 0.82
+export let CARD_D = 0.82
 const CARD_R = 0.34
 
-const CARD_VERT = /* glsl */`
+const cardVert = () => /* glsl */`
     // A subdivided box rounded in the shader: every vertex is pushed onto a
     // rounded box (inner box + radius), which gives smooth edges with plenty of
     // vertices for the jelly bend below.
@@ -96,7 +103,7 @@ const CARD_VERT = /* glsl */`
     }
 `
 
-const CARD_FRAG = /* glsl */`
+const cardFrag = () => /* glsl */`
     uniform sampler2D map;
     uniform float hasMap;
     uniform vec3  baseColor;
@@ -152,7 +159,7 @@ const CARD_FRAG = /* glsl */`
 
         // grain scatter while moving (front face, from Antwerp Unseen)
         float av = abs(velocity);
-        vec2 bUv = floor(uv * vec2(280.0, 190.0)) / vec2(280.0, 190.0);
+        vec2 bUv = floor(uv * vec2(280.0, ${(280 * CARD_H / CARD_W).toFixed(1)})) / vec2(280.0, ${(280 * CARD_H / CARD_W).toFixed(1)});
         vec2 rnd = vec2(random(bUv), random(bUv + vec2(1.0, 0.0))) * 2.0 - 1.0;
         uv += rnd * av * 0.07 * front;
 
@@ -184,9 +191,12 @@ const CARD_FRAG = /* glsl */`
         float fr = pow(1.0 - abs(dot(normalize(vViewN), V)), 2.2);
         vec3 glow = mix(glowA, glowB, 0.5 + 0.5 * sin(uTime * 0.5 + uPhase + vObj.x * 1.4));
         col = mix(col, glow, fr * 0.8 * (1.0 - 0.55 * sharp * front));
-        col += glow * fr * 0.18;
+        col += glow * fr * 0.18 * (1.0 - uDark);
 
-        col = mix(col, fogColor, fog);
+        // dark theme: the light pastels read chalky on black → deepen them (gamma), keep the
+        // in-focus image as is, and let distance sink blocks into the dark rather than a grey veil
+        col = mix(col, col * col * 1.12, uDark * 0.75 * (1.0 - clar));
+        col = mix(col, fogColor, fog * mix(1.0, 1.7, uDark));
         // feathered silhouette: sides turn translucent and the border dissolves into
         // the background (the halo behind the block carries its colour outward)
         // solid body; only the faint outermost rim softens, the halo behind does the feathering
@@ -204,7 +214,7 @@ const CARD_FRAG = /* glsl */`
         if (edgeCov < th * 0.95) {
             float hc = random(dc + floor(uTime * 5.0) * 0.17);
             if (inDot < 0.5) a = 0.0;
-            else if (hc > 0.6) col = mix(vec3(1.0), vec3(0.62), uDark);
+            else if (hc > 0.6) col = mix(vec3(1.0), glow * 0.75, uDark);
             else if (hc > 0.4) col *= 0.55;
             else a = 0.0;
         }
@@ -325,9 +335,12 @@ function shadowTexture() {
 
 // ── scene ──
 export function createArchiveScene(container, items, { asset }) {
+    const portrait = isSmall() && container.clientHeight > container.clientWidth
+    setDims(portrait)
+    const CARD_VERT = cardVert(), CARD_FRAG = cardFrag()
     // phones: lower pixel ratio, no MSAA (the dither hides the edges anyway)
     const renderer = new THREE.WebGLRenderer({ antialias: !isTouch(), alpha: true, powerPreference: 'high-performance' })
-    renderer.setPixelRatio(maxDpr())
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
     renderer.setClearColor(0x000000, 0)
     renderer.domElement.className = 'ax-canvas'
     container.appendChild(renderer.domElement)
@@ -529,14 +542,21 @@ export function createArchiveScene(container, items, { asset }) {
         const glitch = Math.max(-0.75, Math.min(0.75, vel * 7))
 
         // camera: high and to the left, always aimed at the focal point → active card centred
-        const camDist = mobile ? 18.5 : 12.2
         const swayX = mouse.x * 0.5 + (progress - 0.5) * 0.8
-        // same angle as before, just further back (scaled by camDist) → smaller scene, same composition
-        const k = camDist / (mobile ? 15 : 9.2)
-        camera.position.set(((mobile ? -1.2 : -2.6) + swayX) * k, ((mobile ? 5.2 : 3.3) - mouse.y * 0.3) * k, camDist)
-        camTarget.set(mobile ? 0.25 : 0, mobile ? 1.1 : 0.55, 0)
+        if (portrait) {
+            // phones: closer and lower, so the tall active block fills the screen and faces you
+            const camDist = 12.2, k = camDist / 15
+            camera.position.set((-1.1 + swayX * 0.6) * k, 3.4 * k, camDist)
+            camTarget.set(0.06, 0.15, 0)
+        } else {
+            const camDist = mobile ? 18.5 : 12.2
+            // same angle as before, just further back (scaled by camDist) → smaller scene, same composition
+            const k = camDist / (mobile ? 15 : 9.2)
+            camera.position.set(((mobile ? -1.2 : -2.6) + swayX) * k, ((mobile ? 5.2 : 3.3) - mouse.y * 0.3) * k, camDist)
+            camTarget.set(mobile ? 0.25 : 0, mobile ? 1.1 : 0.55, 0)
+        }
         camera.lookAt(camTarget)
-        // a touch of dolly-zoom when moving fast — perspective breathes with the scroll
+        // a touch of dolly-zoom when moving fast - perspective breathes with the scroll
         const fov = (mobile ? 42 : 34) + Math.min(9, Math.abs(vel) * 70)
         if (Math.abs(camera.fov - fov) > 0.01) { camera.fov += (fov - camera.fov) * 0.15; camera.updateProjectionMatrix() }
 
@@ -607,7 +627,7 @@ export function createArchiveScene(container, items, { asset }) {
             c.roll = (c.roll || 0) + ((-curve * 0.9) * (1 - e * 0.7) - (c.roll || 0)) * 0.12 * dt
             c.group.rotation.set(0, c.yaw, c.roll, 'YXZ')
 
-            // grow from the floor — springy, with a soft overshoot
+            // grow from the floor - springy, with a soft overshoot
             const scT = BASE + GROW * e
             c.scV += (scT - c.sc) * 0.045 * dt
             c.scV *= Math.pow(0.8, dt)
@@ -644,6 +664,10 @@ export function createArchiveScene(container, items, { asset }) {
                 _a.set(0, -CARD_H / 2, CARD_D / 2).applyMatrix4(c.mesh.matrixWorld).project(camera)
                 label.x = (_a.x * 0.5 + 0.5) * renderer.domElement.clientWidth
                 label.y = (-_a.y * 0.5 + 0.5) * renderer.domElement.clientHeight
+                // right edge, half height: where the end-of-archive button docks
+                _a.set(CARD_W / 2, 0, CARD_D / 2).applyMatrix4(c.mesh.matrixWorld).project(camera)
+                label.rx = (_a.x * 0.5 + 0.5) * renderer.domElement.clientWidth
+                label.ry = (-_a.y * 0.5 + 0.5) * renderer.domElement.clientHeight
             }
 
             // halos sit just behind the block's centre
@@ -653,8 +677,10 @@ export function createArchiveScene(container, items, { asset }) {
                 h.scale.set(CARD_W * 1.55 * c.sc, CARD_H * 2.1 * c.sc, 1)
                 // light theme: a pale wash of the block's colours; dark theme: lean into the
                 // background instead of white, or the glow reads as a white fog
-                h.material.color.copy(k ? c.uniforms.glowB.value : c.uniforms.glowA.value).lerp(colors.dark ? colors.bg : WHITE, colors.dark ? 0.35 : 0.5)
-                h.material.opacity = alpha * (0.22 + 0.22 * e) * (colors.dark ? 0.55 : 1)
+                h.material.color.copy(k ? c.uniforms.glowB.value : c.uniforms.glowA.value).lerp(colors.dark ? colors.bg : WHITE, colors.dark ? 0.1 : 0.5)
+                // dark: a light halo over black is what read as a musty white fog, so only the
+                // active block keeps a faint glow of its own colour
+                h.material.opacity = colors.dark ? alpha * e * 0.1 : alpha * (0.22 + 0.22 * e)
             })
 
             // ghost trail: each ghost eases toward the block's current pose; visible only while it lags
@@ -705,7 +731,16 @@ export function createArchiveScene(container, items, { asset }) {
         cards.forEach(c => { c.uniforms.uDark.value = colors.dark ? 1 : 0 })
     }
 
-    return { render, resize, pick, dispose, setTheme }
+    // adaptive resolution: a struggling device drops a step of pixel ratio (never below 1)
+    const lowerDpr = () => {
+        const cur = renderer.getPixelRatio()
+        if (cur <= 1) return false
+        renderer.setPixelRatio(Math.max(1, cur - 0.25))
+        resize()
+        return true
+    }
+
+    return { render, resize, pick, dispose, setTheme, lowerDpr }
 }
 
 // floor follows the track's height softly so cards always stand on it

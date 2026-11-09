@@ -1,4 +1,4 @@
-/* ═══════════ SHELL — Figma "Desktop - 2" (1:42) ═══════════
+/* ═══════════ SHELL - Figma "Desktop - 2" (1:42) ═══════════
    Every measurement is the design value at 1440×1024, scaled by
    --kx (width) / --ky (height) / --ks (uniform) set from JS.
    Colours live in index.css (--sh-*) so dark mode can swap them. */
@@ -39,9 +39,12 @@
     letter-spacing: 0.02em;
     color: var(--sh-name);
     z-index: 3;
-    pointer-events: none;
+    text-decoration: none;
+    cursor: pointer;
     user-select: none;
+    transition: color 0.3s;
 }
+.sh-name:hover { color: var(--sh-ink-a); }
 
 /* ── top-right corner (1:242) + sun (1:260) ── */
 .sh-corner {
@@ -74,7 +77,7 @@
 .sh-corner-sun:hover svg { transform: rotate(45deg) scale(1.08); }
 .sh-corner-sun:focus-visible { outline: 2px solid var(--sh-ink-b); outline-offset: 4px; border-radius: 50%; }
 
-/* ── tagline (1:135) — gradient text, bottom 29px above the line, 26px from the right ── */
+/* ── tagline (1:135) - gradient text, bottom 29px above the line, 26px from the right ── */
 .sh-tagline {
     position: absolute;
     right: 74px;
@@ -90,7 +93,7 @@
     z-index: 2;
 }
 
-/* ── the content box — the only scroller ── */
+/* ── the content box - the only scroller ── */
 .sh-box {
     position: absolute;
     inset: 0;

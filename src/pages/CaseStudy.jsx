@@ -44,6 +44,7 @@ export default function CaseStudy() {
     // (so /case-studies/... resolves correctly when hosted under a subpath).
     const parsed = marked.parse(study.md, { renderer })
       .replaceAll('src="/case-studies/', `src="${import.meta.env.BASE_URL}case-studies/`)
+      .replaceAll('poster="/case-studies/', `poster="${import.meta.env.BASE_URL}case-studies/`)
 
     return { html: parsed, toc: tocItems }
   }, [study])
@@ -65,7 +66,23 @@ export default function CaseStudy() {
     )
   }, [slug, study])
 
-  // Scroll spy — highlight whichever section is currently at the top of the viewport.
+  // videos play only while on screen (and never for reduced motion)
+  useEffect(() => {
+    const content = contentRef.current
+    if (!content) return
+    const vids = Array.from(content.querySelectorAll('video'))
+    if (!vids.length) return
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const io = new IntersectionObserver((entries) => entries.forEach(e => {
+      const v = e.target
+      if (e.isIntersecting && !reduce) v.play().catch(() => {})
+      else v.pause()
+    }), { rootMargin: '100px' })
+    vids.forEach(v => { v.removeAttribute('autoplay'); v.pause(); io.observe(v) })
+    return () => io.disconnect()
+  }, [html])
+
+  // Scroll spy - highlight whichever section is currently at the top of the viewport.
   // A plain scroll listener is more reliable than IntersectionObserver here (short
   // sections and fast scrolling can slip through an observer's margin band).
   useEffect(() => {
@@ -106,7 +123,7 @@ export default function CaseStudy() {
     return (
       <div className="cs-notfound">
         <p>Case study not found.</p>
-        <Link to="/" className="btn-secondary" onClick={(e) => { e.preventDefault(); goTo('/') }}>← Back home</Link>
+        <Link to="/work" className="btn-secondary" onClick={(e) => { e.preventDefault(); goTo('/work') }}>← All work</Link>
       </div>
     )
   }
@@ -120,7 +137,7 @@ export default function CaseStudy() {
     <article className="cs">
       {/* Top bar */}
       <div className="cs-topbar">
-        <button className="cs-back" onClick={() => goTo('/')}>
+        <button className="cs-back" onClick={() => goTo('/work')}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <path d="M12 7H2M6 3L2 7l4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -137,6 +154,12 @@ export default function CaseStudy() {
         </div>
         <h1 className="cs-title">{study.title}</h1>
         <p className="cs-subtitle">{study.subtitle}</p>
+        {study.notice && (
+          <p className="cs-notice" role="note">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden><circle cx="10" cy="10" r="8.5" fill="currentColor" /><path d="M10 9v5" stroke="var(--bg)" strokeWidth="2" strokeLinecap="round" /><circle cx="10" cy="6.2" r="1.2" fill="var(--bg)" /></svg>
+            <span>{study.notice}</span>
+          </p>
+        )}
         <div className="cs-facts">
           <div className="cs-fact">
             <span className="cs-fact-label mono">Role</span>
@@ -198,7 +221,8 @@ export default function CaseStudy() {
 
       {/* Next project footer */}
       <footer className="cs-footer">
-        <Link to="/" className="cs-footer-link" onClick={(e) => { e.preventDefault(); goTo('/') }}>
+        {study.notice && <p className="cs-footer-note mono">{study.notice}</p>}
+        <Link to="/work" className="cs-footer-link" onClick={(e) => { e.preventDefault(); goTo('/work') }}>
           <span className="mono">← All work</span>
         </Link>
       </footer>

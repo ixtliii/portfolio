@@ -32,7 +32,7 @@ export async function submitMessage({ name, email, message }) {
         })
         const data = await r.json().catch(() => ({}))
         // FormSubmit answers { success: "true" }; before activation it says the form
-        // needs activating — the message is held and delivered after, so that's a send too
+        // needs activating - the message is held and delivered after, so that's a send too
         const pending = /activat/i.test(data?.message || '')
         const ok = r.ok && (data?.success === true || data?.success === 'true' || pending || data?.ok === true || data?.success === undefined)
         return { ok, pending }

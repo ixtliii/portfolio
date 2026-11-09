@@ -21,8 +21,8 @@ const LINES = [
         text: 'Product designer who translates your ideas into real products', hold: 2.8,
         face: { happy: 0, open: 1, tilt: 0.25 },
         at: [
-            { char: 21, face: { happy: 0, open: 0.82, tilt: 0.45 }, look: { x: 0.35, y: 0.55 } },   // "translates…" — thinking, glancing up
-            { char: 48, face: { happy: 0.85, open: 1.1, tilt: 0 }, look: { x: 0, y: 0 } },          // "real products" — beaming
+            { char: 21, face: { happy: 0, open: 0.82, tilt: 0.45 }, look: { x: 0.35, y: 0.55 } },   // "translates…" - thinking, glancing up
+            { char: 48, face: { happy: 0.85, open: 1.1, tilt: 0 }, look: { x: 0, y: 0 } },          // "real products" - beaming
         ],
     },
     { text: 'Welcome!', hold: 1.5, face: { happy: 1, open: 1.1 }, hop: true },

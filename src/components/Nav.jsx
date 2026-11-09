@@ -70,7 +70,7 @@ export default function Nav() {
         <a href="#work" className="nav-link" onClick={(e) => goToSection(e, '#work')}>Work</a>
         <a href="#about" className="nav-link" onClick={(e) => goToSection(e, '#about')}>About</a>
         <a href="#contact" className="nav-link" onClick={(e) => goToSection(e, '#contact')}>Contact</a>
-        <a href={`${import.meta.env.BASE_URL}Artem_Diakunchak-CV.pdf`} className="nav-cta" download="Artem Diakunchak — CV.pdf">Résumé ↓</a>
+        <a href={`${import.meta.env.BASE_URL}Artem_Diakunchak-CV.pdf`} className="nav-cta" download="Artem Diakunchak - CV.pdf">Résumé ↓</a>
       </div>
     </nav>
   )

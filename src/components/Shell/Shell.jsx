@@ -5,6 +5,7 @@ import { useTheme } from '../../lib/theme'
 import { CornerSun } from './icons'
 import LiquidNav, { NAV_ITEMS } from './LiquidNav'
 import { scrollToEl } from '../../lib/scroll'
+import { goTo as goToPage } from '../../lib/transition'
 import './Shell.css'
 
 /* ─────────────────────────────────────────────────────────
@@ -93,7 +94,11 @@ export default function Shell({ children }) {
             <div className="sh-bg sh-bg--dark" aria-hidden />
 
             {/* name, floating top-left (no frame any more) */}
-            <p className="sh-name">Artem Diakunchak</p>
+            <a
+                className="sh-name"
+                href={import.meta.env.BASE_URL}
+                onClick={(e) => { e.preventDefault(); if (location.pathname !== '/') goToPage('/'); else scrollToY(0, { duration: 1.2 }) }}
+            >Artem Diakunchak</a>
 
             {/* top-right corner + sun */}
             <button
@@ -107,7 +112,7 @@ export default function Shell({ children }) {
             </button>
 
 
-            {/* the content box — the only thing that scrolls */}
+            {/* the content box - the only thing that scrolls */}
             <div className="sh-box" ref={boxRef}>
                 <div className="sh-box-content">{children}</div>
             </div>

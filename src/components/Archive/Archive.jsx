@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { PROJECTS } from '../../projects'
+import { PROJECTS, KIND_LABEL } from '../../projects'
 import { getLenis, scrollToY, getScrollTop, getViewportHeight, offsetTopOf, topInView } from '../../lib/scroll'
 import { createArchiveScene } from './scene'
 import { goTo } from '../../lib/transition'
@@ -13,14 +13,14 @@ const asset = (p) => (p ? import.meta.env.BASE_URL + p.replace(/^\//, '') : p)
 const pad = (n) => String(n).padStart(2, '0')
 
 /* ─────────────────────────────────────────────────────────
-   THE ARCHIVE — page scroll drives a WebGL track of project
+   THE ARCHIVE - page scroll drives a WebGL track of project
    cards (see scene.js). This component owns scrolling,
    snapping, input and the HTML overlay.
    ───────────────────────────────────────────────────────── */
 
 const SCROLL_PER = 0.5          // viewport-heights of scroll per project
 
-// spring for the cards (per 60fps frame) — page scroll is already smoothed by Lenis
+// spring for the cards (per 60fps frame) - page scroll is already smoothed by Lenis
 const STIFF = 0.11
 const DAMP  = 0.7
 
@@ -38,6 +38,7 @@ export default function Archive() {
     const lean      = useRef(0)
     const progress  = useRef(0)
     const activeRef = useRef(0)
+    const endRef    = useRef(null)
     const pointer   = useRef({ x: 0, y: 0, cx: -1, cy: -1, sx: 0, sy: 0 })
     const hoverRef  = useRef(null)
     const drag      = useRef({ on: false, x: 0, moved: 0, v: 0 })
@@ -45,7 +46,39 @@ export default function Archive() {
     const [active, setActive]   = useState(0)
     const [hovered, setHovered] = useState(false)
 
-    const items = useMemo(() => PROJECTS.map((p, i) => ({ ...p, no: pad(i + 1) })), [])
+    // category filter: 'all' or a project kind (see KIND_LABEL in projects.js)
+    const [filter, setFilter] = useState('all')
+    const items = useMemo(
+        () => PROJECTS.filter(p => filter === 'all' || p.kind === filter).map((p, i) => ({ ...p, no: pad(i + 1) })),
+        [filter]
+    )
+    const filters = useMemo(() => [
+        { id: 'all', label: 'All', count: PROJECTS.length },
+        ...Object.entries(KIND_LABEL).map(([id, label]) => ({ id, label, count: PROJECTS.filter(p => p.kind === id).length })),
+    ], [])
+    const switching = useRef(false)
+    const pickFilter = (id) => {
+        if (id === filter || switching.current) return
+        switching.current = true
+        const stage = stageRef.current
+        // the track dips out, the set is swapped, and it comes back from the first project
+        gsap.to([stage, nameRef.current], {
+            opacity: 0, filter: 'blur(6px)', duration: 0.28, ease: 'power2.in',
+            onComplete: () => {
+                const el = sectionRef.current
+                scrollToY(el ? offsetTopOf(el) : 0, { immediate: true })
+                target.current = current.current = velocity.current = 0
+                activeRef.current = 0
+                setActive(0)
+                setFilter(id)
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    ScrollTrigger.refresh()
+                    gsap.to([stage, nameRef.current], { opacity: 1, filter: 'blur(0px)', duration: 0.5, ease: 'power2.out', clearProps: 'filter' })
+                    switching.current = false
+                }))
+            },
+        })
+    }
     const n = items.length
     const project = items[Math.min(active, n - 1)]
 
@@ -136,8 +169,17 @@ export default function Archive() {
         const ro = new ResizeObserver(() => scene.resize())
         ro.observe(stage)
 
+        // frame-time watch: if frames keep running long, render at a lower resolution
+        const perf = { sum: 0, n: 0, cooldown: 0 }
         const loop = (time, dtMs) => {
             const dt = Math.min(dtMs || 16.7, 50) / 16.7
+            if (visible && document.visibilityState === 'visible' && dtMs < 200) {
+                perf.sum += dtMs; perf.n++
+                if (perf.n >= 90) {
+                    if (perf.cooldown-- <= 0 && perf.sum / perf.n > 24 && scene.lowerDpr()) perf.cooldown = 2
+                    perf.sum = 0; perf.n = 0
+                }
+            }
             if (reduce) {
                 current.current = target.current; velocity.current = 0
             } else {
@@ -202,6 +244,25 @@ export default function Archive() {
                 el.style.opacity = o.toFixed(3)
                 el.style.transform = `translate(${lab.x.toFixed(1)}px, ${(lab.y + 18).toFixed(1)}px) translate(-50%, 0) translateY(${((1 - o) * 6).toFixed(1)}px)`
                 el.style.filter = o < 1 ? `blur(${((1 - o) * 4).toFixed(1)}px)` : 'none'
+
+                // end of the archive: an invitation docks beside the last block
+                // (or under its name when there's no room, on phones)
+                const end = endRef.current
+                if (end) {
+                    const oe = lab.index === n - 1 ? Math.max(0, Math.min(1, (lab.e - 0.85) / 0.15)) : 0
+                    const vw = stage.clientWidth
+                    const side = lab.rx + 36 + end.offsetWidth < vw - 24
+                    const x = side ? lab.rx + 36 : lab.x - end.offsetWidth / 2
+                    const y = side ? lab.ry - end.offsetHeight / 2 : lab.y + 18 + el.offsetHeight + 28
+                    end.style.opacity = oe.toFixed(3)
+                    end.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translateX(${((1 - oe) * (side ? -14 : 0)).toFixed(1)}px) translateY(${((1 - oe) * (side ? 0 : 10)).toFixed(1)}px)`
+                    end.style.filter = oe < 1 ? `blur(${((1 - oe) * 5).toFixed(1)}px)` : 'none'
+                    const on = oe > 0.6
+                    if (end.classList.contains('is-on') !== on) {
+                        end.classList.toggle('is-on', on)
+                        end.inert = !on
+                    }
+                }
             }
         }
         gsap.ticker.add(loop)
@@ -222,6 +283,11 @@ export default function Archive() {
         if (p.link.slug) goTo(`/work/${p.link.slug}`)
         else window.open(p.link.url, '_blank', 'noopener,noreferrer')
     }
+
+    // new set after filtering → the helper's menu (next / previous / open) follows it
+    useEffect(() => {
+        window.dispatchEvent(new CustomEvent('projectchange', { detail: { index: 0, total: items.length, title: items[0]?.title } }))
+    }, [items])
 
     /* ── commands from the helper mascot ── */
     useEffect(() => {
@@ -342,10 +408,42 @@ export default function Archive() {
                     className={`ax-stage${hovered ? ' is-hover' : ''}`}
                     ref={stageRef}
                     role="listbox"
-                    aria-label="Projects — scroll, drag or use arrow keys to browse"
+                    aria-label="Projects - scroll, drag or use arrow keys to browse"
                 />
 
                 <div className="ax-name-tag" ref={nameRef} aria-hidden />
+
+                {/* category filter */}
+                <div className="ax-filter" role="group" aria-label="Filter projects by category">
+                    {filters.map(f => (
+                        <button
+                            key={f.id}
+                            type="button"
+                            className={`ax-filter-btn${filter === f.id ? ' is-on' : ''}`}
+                            aria-pressed={filter === f.id}
+                            onClick={() => pickFilter(f.id)}
+                        >
+                            {f.label}<span className="ax-filter-n">{f.count}</span>
+                        </button>
+                    ))}
+                </div>
+
+                {/* after the last project: on to the next part of the site */}
+                <div className="ax-end" ref={endRef} inert>
+                    <span className="ax-end-note">That's all for now</span>
+                    <button
+                        type="button"
+                        className="ct-send ax-end-btn"
+                        onClick={() => goTo('/')}
+                    >
+                        <span className="ct-send-dots ct-send-dots--big" aria-hidden />
+                        <span className="ct-send-dots ct-send-dots--small" aria-hidden />
+                        <span className="ct-send-label">
+                            Meet the designer
+                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden><path d="M3 10h12.5M11 4.8l5.2 5.2-5.2 5.2" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        </span>
+                    </button>
+                </div>
                 <p className="sr-only" aria-live="polite">
                     {project ? `${project.title}, ${project.company}, ${project.year}. Click the card to open.` : ''}
                 </p>
