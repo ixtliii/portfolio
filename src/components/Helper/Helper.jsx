@@ -8,7 +8,7 @@ import { scrollToY, scrollToEl } from '../../lib/scroll'
 import { GUIDE } from '../../pages/about/content'
 import { goTo } from '../../lib/transition'
 import { openContact } from '../../lib/contact'
-import { isTouch } from '../../lib/perf'
+import { isTouch, blur } from '../../lib/perf'
 import HelperNav, { NextIcon, PrevIcon, OpenIcon, FirstIcon, TopIcon, MoonIcon, DownloadIcon, CloseIcon, ClearIcon, HomeIcon, ArchiveIcon } from './HelperNav'
 import { MailIcon, SunIcon } from '../Shell/icons'
 import './Helper.css'
@@ -188,19 +188,6 @@ export default function Helper({ arrived = false, visible = true }) {
         }
     }, [say])
 
-    // a nudge when nothing has happened for a while
-    useEffect(() => {
-        const id = setInterval(() => {
-            if (open || shown || document.querySelector('.ct.is-open')) return   // quiet while the contact card is up
-            if (performance.now() - lastAct.current > 16000) {
-                lastAct.current = performance.now()
-                say(`Need a hand? ${isTouch() ? 'Tap' : 'Click'} me.`, { hold: 3.2 })
-                twirl(avatarRef.current)
-            }
-        }, 2000)
-        return () => clearInterval(id)
-    }, [open, shown, say])
-
     // ── the menu
     const close = useCallback(() => {
         setOpen(false); setShown(false)
@@ -297,7 +284,7 @@ export default function Helper({ arrived = false, visible = true }) {
         const el = bubbleRef.current
         if (!el) return
         gsap.killTweensOf(el)
-        if (shown) gsap.fromTo(el, { scale: 0.4, opacity: 0, filter: 'blur(4px)' }, { scale: 1, opacity: 1, filter: 'blur(0px)', duration: 0.55, ease: 'elastic.out(1, 0.6)', transformOrigin: '88% 100%' })
+        if (shown) gsap.fromTo(el, { scale: 0.4, opacity: 0, ...blur(4) }, { scale: 1, opacity: 1, ...blur(0), duration: 0.55, ease: 'elastic.out(1, 0.6)', transformOrigin: '88% 100%' })
         else gsap.to(el, { scale: 0.6, opacity: 0, duration: 0.22, ease: 'power2.in', transformOrigin: '88% 100%' })
     }, [shown])
 
@@ -315,7 +302,7 @@ export default function Helper({ arrived = false, visible = true }) {
             {open && <HelperNav groups={groups} onRun={(it) => (it.href ? close() : it.run())} />}
             {/* always-visible cue: the mascot is the way around the site */}
             <button className={`hp-tag${shown || open ? ' is-hidden' : ''}`} onClick={toggleMenu} tabIndex={-1} aria-hidden>
-                <span className="hp-tag-dot" />{isTouch() ? 'Tap me to navigate' : 'Click me to navigate'}
+                <span className="hp-tag-dot" />Menu
             </button>
             <button
                 className="hp-btn"

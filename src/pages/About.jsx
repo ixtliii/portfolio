@@ -9,10 +9,10 @@ import Ambient from './about/Ambient'
 import Windows from './about/Windows'
 import Selected from './about/Selected'
 import JourneyArt from './about/JourneyArt'
-import { PORTRAIT, HELLO, FEATURED, BIO, JOURNEY, SKILLS, WORDS, WORDS_TITLE, WORDS_LINE, GUIDE } from './about/content'
+import { PORTRAIT, HELLO, FEATURED, BIO, JOURNEY, SKILLS, WORDS, WORDS_TITLE, GUIDE } from './about/content'
 import { openContact, EMAIL } from '../lib/contact'
 import { goTo } from '../lib/transition'
-import { isTouch } from '../lib/perf'
+import { isTouch, isLowPower } from '../lib/perf'
 import { offsetTopOf, getViewportHeight, scrollToY } from '../lib/scroll'
 import './About.css'
 
@@ -77,8 +77,7 @@ export default function About() {
           .fromTo(q('.ab-name-b'), { xPercent: 18, opacity: 0 }, { xPercent: 0, opacity: 1, duration: 1.4, ease: 'expo.out' }, 0.06)
           .fromTo(q('.ab-hello-card'), { y: 80, rotate: 8, scale: 0.86, opacity: 0 }, { y: 0, rotate: -3, scale: 1, opacity: 1, duration: 1.5, ease: 'expo.out' }, 0.1)
           .fromTo(qa('.ab-sticker'), { scale: 0.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.8, ease: 'elastic.out(1, 0.55)', stagger: 0.12 }, 0.75)
-          .fromTo(qa('.ab-win'), { y: 40, scale: 0.9, opacity: 0, filter: 'blur(8px)' }, { y: 0, scale: 1, opacity: 1, filter: 'blur(0px)', duration: 1.1, ease: 'expo.out', stagger: 0.12 }, 0.9)
-          .fromTo(qa('.ab-hello-foot > *'), { y: 14, opacity: 0, filter: 'blur(4px)' }, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.9, ease: 'power3.out', stagger: 0.08 }, 0.6)
+          .fromTo(qa('.ab-win'), { y: 40, scale: 0.9, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 1.1, ease: 'expo.out', stagger: 0.12 }, 0.9)
 
         // cursor depth: card tilts toward, name drifts away, stickers float in front
         const layers = [
@@ -88,19 +87,30 @@ export default function About() {
         ].map(([node, dx, dy]) => ({ x: gsap.quickTo(node, 'x', { duration: 1, ease: 'power3.out' }), y: gsap.quickTo(node, 'y', { duration: 1, ease: 'power3.out' }), dx, dy }))
         const rx = gsap.quickTo(q('.ab-hello-tilt'), 'rotationY', { duration: 1, ease: 'power3.out' })
         const ry = gsap.quickTo(q('.ab-hello-tilt'), 'rotationX', { duration: 1, ease: 'power3.out' })
-        const move = (e) => {
-            const nx = e.clientX / window.innerWidth - 0.5, ny = e.clientY / window.innerHeight - 0.5
+        // pointer events can fire several times per frame: keep the latest, apply once per frame,
+        // and only while the hero is actually on screen
+        let px = 0, py = 0, queued = false, onScreen = true
+        const apply = () => {
+            queued = false
+            if (!onScreen) return
+            const nx = px / window.innerWidth - 0.5, ny = py / window.innerHeight - 0.5
             layers.forEach(l => { l.x(nx * l.dx * 2); l.y(ny * l.dy * 2) })
             rx(nx * 16); ry(-ny * 12)
         }
-        if (!isTouch()) window.addEventListener('pointermove', move)
+        const move = (e) => {
+            px = e.clientX; py = e.clientY
+            if (!queued) { queued = true; requestAnimationFrame(apply) }
+        }
+        const vis = new IntersectionObserver(([e]) => { onScreen = e.isIntersecting })
+        vis.observe(el)
+        if (!isTouch() && !isLowPower()) window.addEventListener('pointermove', move)
 
         // scrolling away: the two halves of the name part, the card sinks back
         const out = gsap.timeline({ scrollTrigger: { trigger: el, start: 'top top', end: 'bottom top', scrub: true } })
         out.to(q('.ab-name-a'), { xPercent: -14, ease: 'none' }, 0)
            .to(q('.ab-name-b'), { xPercent: 14, ease: 'none' }, 0)
            .to(q('.ab-hello-card'), { yPercent: 18, scale: 0.9, ease: 'none' }, 0)
-        return () => { tl.kill(); out.scrollTrigger?.kill(); out.kill(); window.removeEventListener('pointermove', move); window.removeEventListener('introphase', onPhase) }
+        return () => { tl.kill(); out.scrollTrigger?.kill(); out.kill(); vis.disconnect(); window.removeEventListener('pointermove', move); window.removeEventListener('introphase', onPhase) }
     }, [])
 
     // the corner mascot narrates each chapter once
@@ -144,6 +154,13 @@ export default function About() {
         const bar = sec.querySelector('.ab-jl-bar i')
         const n = cards.length
         let last = -1
+        // write a style only when it changed: scrubbing calls this every scroll frame
+        const prev = cards.map(() => ({ t: '', o: '' }))
+        const set = (i, t, o) => {
+            const c = cards[i], pv = prev[i]
+            if (pv.t !== t) { c.style.transform = t; pv.t = t }
+            if (pv.o !== o) { c.style.opacity = o; pv.o = o }
+        }
         const render = (p) => {
             // 0 … n-1, eased so each stop rests for a moment before the next one deals in
             const raw = p * (n - 1), base = Math.min(n - 2, Math.floor(raw)), fr = raw - base
@@ -152,23 +169,21 @@ export default function About() {
             reel.style.transform = `translate3d(0, ${(-f * 100 / n).toFixed(3)}%, 0)`
             cards.forEach((c, i) => {
                 const d = f - i                           // >0: buried under newer cards, <0: still to come
-                if (d < -1) { c.style.transform = 'translate3d(0, 120%, 0) rotate(6deg)'; c.style.opacity = 0; return }
+                if (d < -1) { set(i, 'translate3d(0, 120%, 0) rotate(6deg)', '0'); return }
                 if (d < 0) {                              // the next card slides up from below
                     const t = 1 + d
                     const e = 1 - Math.pow(1 - t, 3)
-                    c.style.transform = `translate3d(0, ${((1 - e) * 150).toFixed(2)}%, 0) rotate(${((1 - e) * 6).toFixed(2)}deg)`
-                    c.style.opacity = Math.min(1, t * 5).toFixed(3)
-                    c.style.filter = 'none'
+                    set(i, `translate3d(0, ${((1 - e) * 150).toFixed(2)}%, 0) rotate(${((1 - e) * 6).toFixed(2)}deg)`, Math.min(1, t * 5).toFixed(3))
                     return
                 }
                 const k = Math.min(d, 3)                  // settled: sink back into the stack
-                c.style.transform = `translate3d(0, ${(-k * 7).toFixed(2)}%, 0) scale(${(1 - k * 0.07).toFixed(4)}) rotate(${(k * (i % 2 ? 1.6 : -1.6)).toFixed(2)}deg)`
-                c.style.opacity = Math.max(0, 1 - k * 0.32).toFixed(3)
-                c.style.filter = k > 0.05 ? `blur(${(k * 1.2).toFixed(2)}px)` : 'none'
+                // (sinking cards used to blur too; re-blurring a WebGL card every scroll frame is what stuttered)
+                set(i, `translate3d(0, ${(-k * 7).toFixed(2)}%, 0) scale(${(1 - k * 0.07).toFixed(4)}) rotate(${(k * (i % 2 ? 1.6 : -1.6)).toFixed(2)}deg)`, Math.max(0, 1 - k * 0.32).toFixed(3))
             })
             const cur = Math.round(f)
             if (cur !== last) { last = cur; items.forEach((it, i) => it.classList.toggle('is-on', i === cur)) }
-            bar.style.transform = `scaleY(${p.toFixed(4)})`
+            const b = `scaleY(${p.toFixed(4)})`
+            if (bar.style.transform !== b) bar.style.transform = b
         }
         render(0)
         const st = ScrollTrigger.create({
@@ -189,10 +204,10 @@ export default function About() {
     useEffect(() => {
         const els = rootRef.current.querySelectorAll('[data-rise]')
         const sts = Array.from(els).map(el => {
-            gsap.set(el, { y: 36, opacity: 0, filter: 'blur(6px)' })
+            gsap.set(el, { y: 36, opacity: 0 })
             return ScrollTrigger.create({
                 trigger: el, start: 'top 88%', once: true,
-                onEnter: () => gsap.to(el, { y: 0, opacity: 1, filter: 'blur(0px)', duration: 1, ease: 'expo.out', delay: Math.min(0.3, Array.prototype.indexOf.call(el.parentElement.children, el) * 0.08), clearProps: 'filter' }),
+                onEnter: () => gsap.to(el, { y: 0, opacity: 1, duration: 1, ease: 'expo.out', delay: Math.min(0.3, Array.prototype.indexOf.call(el.parentElement.children, el) * 0.08), clearProps: 'transform' }),
             })
         })
         return () => sts.forEach(s => s.kill())
@@ -217,9 +232,6 @@ export default function About() {
                         </div>
                     </div>
                     <Windows />
-                    <p className="ab-hello-foot">
-                        {HELLO.line.map((t, i) => <span key={i}>{t}</span>)}
-                    </p>
                 </div>
             </section>
 
@@ -312,7 +324,7 @@ export default function About() {
             <section className="ab-ch ab-words-ch" data-chapter="words" id="about-words">
                 <Clouds />
                 <p className="ab-kicker" data-rise><span>06</span>Kind words</p>
-                <div data-rise><Words words={WORDS} title={WORDS_TITLE} line={WORDS_LINE} /></div>
+                <div data-rise><Words words={WORDS} title={WORDS_TITLE} /></div>
             </section>
 
             {/* 06 · outro */}

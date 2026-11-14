@@ -277,3 +277,13 @@ html.lenis, html.lenis body { height: auto; }
   overflow: hidden; clip: rect(0 0 0 0);
   white-space: nowrap; border: 0;
 }
+
+/* ── low-power devices (lib/perf.js sets html[data-perf="low"]) ──
+   ambient loops stop, glass loses its live blur, entrances drop the blur step */
+html[data-perf="low"] .ab-portrait::after,
+html[data-perf="low"] .ab-win,
+html[data-perf="low"] .ab-chip:hover,
+html[data-perf="low"] .hp-ring { animation: none; }
+html[data-perf="low"] .ax-tag { animation-name: ax-tag-in-lite; }
+@keyframes ax-tag-in-lite { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+html[data-perf="low"] .ct-pill { -webkit-backdrop-filter: none; backdrop-filter: none; }

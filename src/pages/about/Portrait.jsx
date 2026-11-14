@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
-import { isTouch } from '../../lib/perf'
+import { isTouch, isLowPower, maxDpr, onPerfChange } from '../../lib/perf'
 
 // ─────────────────────────────────────────────────────────
 // Halftone portrait: the photo as round ink dots on a pastel card.
@@ -37,9 +37,10 @@ export default function Portrait({ src, grad }) {
     useEffect(() => {
         const wrap = wrapRef.current, canvas = canvasRef.current
         const ctx = canvas.getContext('2d')
-        const dpr = Math.min(window.devicePixelRatio || 1, 2)
+        let dpr = maxDpr()
         let W = 0, H = 0, cols = 0, rows = 0
         let lum = new Float32Array(0)
+        let base = new Float32Array(0)          // each dot's resting radius, from the photo's tone
         let img = null
         const st = { grow: 0, mx: -999, my: -999, lens: 0, t: 0 }
         const ripples = []
@@ -65,7 +66,11 @@ export default function Portrait({ src, grad }) {
             }
             // stretch contrast so any photo uses the full dot range
             const r = Math.max(0.05, hi - lo)
-            for (let i = 0; i < lum.length; i++) lum[i] = (lum[i] - lo) / r
+            base = new Float32Array(cols * rows)
+            for (let i = 0; i < lum.length; i++) {
+                lum[i] = (lum[i] - lo) / r
+                base[i] = CELL * 0.56 * Math.pow(1 - lum[i], 0.85)
+            }
         }
 
         const resize = () => {
@@ -79,16 +84,15 @@ export default function Portrait({ src, grad }) {
         const draw = () => {
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
             ctx.clearRect(0, 0, W, H)
-            const R = 120, maxR = CELL * 0.56
+            const R = 120
             const ink = new Path2D(), hot = new Path2D()
             const t = st.t
             for (let y = 0; y < rows; y++) {
                 for (let x = 0; x < cols; x++) {
                     let px = x * CELL + CELL / 2, py = y * CELL + CELL / 2
-                    const l = lum[y * cols + x]
                     // entrance: diagonal sweep from the top-left
-                    const g = Math.max(0, Math.min(1, st.grow * 2.2 - (x / cols + y / rows) * 0.6))
-                    let r = maxR * Math.pow(1 - l, 0.85) * g
+                    const g = st.grow >= 1 ? 1 : Math.max(0, Math.min(1, st.grow * 2.2 - (x / cols + y / rows) * 0.6))
+                    let r = base[y * cols + x] * g
                     r *= 0.94 + 0.06 * Math.sin(t * 1.6 + x * 0.22 + y * 0.17)     // slow breathing
                     // lens
                     let near = 0
@@ -122,7 +126,8 @@ export default function Portrait({ src, grad }) {
             if (!alive || !visible) return
             const busy = st.lens > 0.01 || ripples.length || st.grow < 1
             acc += dt
-            if (!busy && acc < 33) return
+            // idle, the dots only breathe: ~20fps is plenty, and low-power devices skip it
+            if (!busy && (acc < 50 || isLowPower())) return
             acc = 0
             st.t = time
             for (let i = ripples.length - 1; i >= 0; i--) {
@@ -153,6 +158,7 @@ export default function Portrait({ src, grad }) {
 
         resize()
         const ro = new ResizeObserver(resize); ro.observe(wrap)
+        const offPerf = onPerfChange(() => { dpr = maxDpr(); resize(); draw() })
         const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting })
         io.observe(wrap)
 
@@ -166,7 +172,7 @@ export default function Portrait({ src, grad }) {
             alive = false
             gsap.ticker.remove(loop)
             gsap.killTweensOf(st)
-            ro.disconnect(); io.disconnect()
+            ro.disconnect(); io.disconnect(); offPerf()
             canvas.removeEventListener('pointerenter', enter)
             canvas.removeEventListener('pointermove', move)
             canvas.removeEventListener('pointerleave', leave)

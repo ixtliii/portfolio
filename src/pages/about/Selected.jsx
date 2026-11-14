@@ -3,10 +3,11 @@ import { goTo } from '../../lib/transition'
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { isLowPower, reducedMotion } from '../../lib/perf'
 
 // ─────────────────────────────────────────────────────────
-// Selected work: three featured projects side by side, plus a small
-// app window (like the hero's) that leads to the full archive at /work.
+// Selected work: three featured projects side by side
+// (the full archive is one click away in the section header).
 // ─────────────────────────────────────────────────────────
 const asset = (p) => `${import.meta.env.BASE_URL}${p.replace(/^\//, '')}`
 
@@ -40,17 +41,19 @@ function Card({ p }) {
 
 export default function Selected({ featured }) {
     const items = featured.map(f => ({ ...PROJECTS.find(p => p.title === f.title), ...f }))
-    const all = PROJECTS
     const root = useRef(null)
 
     // the cards dither in out of the page, one after another: four interleaved
     // grids of round dots grow in Bayer order (0, 3, 1, 2) until they cover the card
     useEffect(() => {
         const els = Array.from(root.current.querySelectorAll('.ab-dith'))
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        if (reduce) { els.forEach(el => el.classList.remove('ab-dith')); return }
+        const low = isLowPower()
+        if (reducedMotion()) { els.forEach(el => el.classList.remove('ab-dith')); return }
+        // low-power: the animated dot mask repaints the whole card every frame, so fade instead
+        if (low) els.forEach(el => { el.classList.remove('ab-dith'); gsap.set(el, { opacity: 0 }) })
         // batch: whatever enters together is revealed in sequence (a row on desktop, one by one on phones)
         const reveal = (el, delay) => {
+            if (low) { gsap.to(el, { opacity: 1, duration: 0.7, ease: 'power2.out', delay, clearProps: 'opacity' }); return }   // opacity only: the card has its own transform transition
             const tl = gsap.timeline({ delay, onComplete: () => el.classList.add('is-in') })
             ;['--d0', '--d3', '--d1', '--d2'].forEach((v, k) => tl.to(el, { [v]: '6.2px', duration: 0.5, ease: 'power2.out' }, k * 0.13))
         }
@@ -65,32 +68,6 @@ export default function Selected({ featured }) {
         <div className="ab-sw" ref={root}>
             <div className="ab-sw-grid">
                 {items.map(p => <Card key={p.title} p={p} />)}
-
-            </div>
-
-            {/* the rest of the work: one quiet window, like the ones in the hero */}
-            <div className="ab-sw-more ab-dith">
-                <button type="button" className="ab-win ab-win--inline" onClick={() => goTo('/work')} aria-label={`Open the full archive, ${all.length} projects`}>
-                    <span className="ab-win-bar">
-                        <span className="ab-win-dots" aria-hidden><i /><i /><i /></span>
-                        <span className="ab-win-name">work.archive</span>
-                        <span className="ab-win-count">{all.length} items</span>
-                    </span>
-                    <span className="ab-win-row">
-                        <span className="ab-win-blocks" aria-hidden>
-                            <i style={{ '--a': '#ffcca3', '--b': '#e3875a' }} />
-                            <i style={{ '--a': '#d4c0ff', '--b': '#8e72dc' }} />
-                            <i style={{ '--a': '#b6ebc6', '--b': '#62b884' }} />
-                        </span>
-                        <span className="ab-win-copy">
-                            <span className="ab-win-title">The full archive</span>
-                            <span className="ab-win-sub">Every project, in 3D</span>
-                        </span>
-                        <span className="ab-win-go">
-                            <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden><path d="M5 15 15 5M7 5h8v8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                        </span>
-                    </span>
-                </button>
             </div>
         </div>
     )

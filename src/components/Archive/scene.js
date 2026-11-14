@@ -14,7 +14,7 @@
 //   • rounded corners (SDF), real geometry bend + idle ripple
 // ─────────────────────────────────────────────────────────
 import * as THREE from 'three'
-import { isTouch, isSmall } from '../../lib/perf'
+import { isTouch, isSmall, maxDpr } from '../../lib/perf'
 
 // block size: landscape on desktop, taller portrait blocks on phones (set per scene)
 export let CARD_W = 2
@@ -340,7 +340,7 @@ export function createArchiveScene(container, items, { asset }) {
     const CARD_VERT = cardVert(), CARD_FRAG = cardFrag()
     // phones: lower pixel ratio, no MSAA (the dither hides the edges anyway)
     const renderer = new THREE.WebGLRenderer({ antialias: !isTouch(), alpha: true, powerPreference: 'high-performance' })
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+    renderer.setPixelRatio(maxDpr())          // 1× on low-power devices; Archive also steps it down if frames run long
     renderer.setClearColor(0x000000, 0)
     renderer.domElement.className = 'ax-canvas'
     container.appendChild(renderer.domElement)

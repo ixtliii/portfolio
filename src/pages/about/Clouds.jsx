@@ -1,12 +1,15 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
+import { maxDpr, frameGap, onPerfChange, reducedMotion } from '../../lib/perf'
 
 // ─────────────────────────────────────────────────────────
 // Slow, subtle clouds in round dither dots.
 // Each cloud is a cluster of soft puffs drawn into a tiny density
 // canvas; every cell then becomes a dot where the density beats a
 // 4×4 Bayer threshold, the same ordered dither as the rest of the site.
-// ~30fps, only while on screen.
+// ~25fps (half that on low-power devices), only while on screen.
+// A cloud's shape never changes, so its density sprite is baked once
+// and each frame only stamps the sprites at their new positions.
 // ─────────────────────────────────────────────────────────
 const CELL = 7
 const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map(v => (v + 0.5) / 16)
@@ -43,6 +46,44 @@ function makeCloud(W, H, x) {
     }
 }
 
+// the cloud's density at one pixel per dot cell, drawn once
+function bake(c) {
+    const pad = 2
+    const cw = Math.ceil((c.w * 1.05) / CELL) + pad * 2
+    const ch = Math.ceil((-c.top + c.base) / CELL) + pad * 2
+    const sprite = document.createElement('canvas')
+    sprite.width = cw; sprite.height = ch
+    const sctx = sprite.getContext('2d')
+    const ox = cw / 2, oy = pad - c.top / CELL           // cloud origin (base line) in sprite px
+    sctx.globalCompositeOperation = 'lighten'
+    // flat base slab
+    const bw = c.w / CELL / 2, bh = c.base / CELL
+    const bg = sctx.createLinearGradient(0, oy - bh, 0, oy + bh)
+    bg.addColorStop(0, `rgba(255,255,255,${c.a * 0.75})`)
+    bg.addColorStop(1, `rgba(255,255,255,${c.a * 0.35})`)
+    sctx.fillStyle = bg
+    sctx.beginPath()
+    sctx.roundRect(ox - bw, oy - bh, bw * 2, bh * 2, bh)
+    sctx.fill()
+    // puffs, lit from the top
+    for (const p of c.puffs) {
+        const x = ox + p.dx / CELL, y = oy + p.dy / CELL, r = p.r / CELL
+        const g = sctx.createRadialGradient(x - r * 0.15, y - r * 0.35, 0, x, y, r)
+        g.addColorStop(0, `rgba(255,255,255,${c.a})`)
+        g.addColorStop(0.6, `rgba(255,255,255,${c.a * 0.8})`)
+        g.addColorStop(0.93, `rgba(255,255,255,${c.a * 0.55})`)
+        g.addColorStop(1, 'rgba(255,255,255,0.02)')
+        sctx.fillStyle = g
+        sctx.beginPath(); sctx.arc(x, y, r, 0, Math.PI * 2); sctx.fill()
+    }
+    // cut a clean flat underside
+    sctx.globalCompositeOperation = 'destination-out'
+    sctx.fillStyle = '#000'
+    sctx.fillRect(0, oy + bh * 0.6, cw, ch)
+    c.sprite = sprite; c.ox = ox; c.oy = oy
+    return c
+}
+
 export default function Clouds() {
     const ref = useRef(null)
 
@@ -51,9 +92,7 @@ export default function Clouds() {
         const ctx = canvas.getContext('2d')
         const den = document.createElement('canvas')
         const dctx = den.getContext('2d', { willReadFrequently: true })
-        const scratch = document.createElement('canvas')
-        const sctx = scratch.getContext('2d')
-        const dpr = Math.min(window.devicePixelRatio || 1, 2)
+        let dpr = 1
         let W = 0, H = 0, cols = 0, rows = 0, clouds = []
         let color = '#ffffff', visible = false, acc = 0
 
@@ -62,6 +101,7 @@ export default function Clouds() {
         }
         const resize = () => {
             const r = canvas.getBoundingClientRect()
+            dpr = maxDpr()
             W = r.width; H = r.height
             canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr)
             cols = Math.ceil(W / CELL); rows = Math.ceil(H / CELL)
@@ -70,7 +110,7 @@ export default function Clouds() {
             clouds = Array.from({ length: n }, (_, i) => {
                 const c = makeCloud(W, H, (i / n) * (W + 500) - 250 + (Math.random() - 0.5) * 120)
                 c.y = H * (i % 2 ? 0.62 + Math.random() * 0.25 : 0.2 + Math.random() * 0.22)   // alternate high / low so they don't pile up
-                return c
+                return bake(c)
             })
         }
 
@@ -81,42 +121,7 @@ export default function Clouds() {
             dctx.fillStyle = '#000'
             dctx.fillRect(0, 0, cols, rows)
             dctx.globalCompositeOperation = 'lighten'      // max, not sum: overlapping clouds keep their shapes
-            for (const c of clouds) {
-                const pad = 2
-                const cw = Math.ceil((c.w * 1.05) / CELL) + pad * 2
-                const ch = Math.ceil((-c.top + c.base) / CELL) + pad * 2
-                if (scratch.width < cw) scratch.width = cw
-                if (scratch.height < ch) scratch.height = ch
-                sctx.globalCompositeOperation = 'source-over'
-                sctx.clearRect(0, 0, scratch.width, scratch.height)
-                const ox = cw / 2, oy = pad - c.top / CELL           // cloud origin (base line) in scratch px
-                sctx.globalCompositeOperation = 'lighten'
-                // flat base slab
-                const bw = c.w / CELL / 2, bh = c.base / CELL
-                const bg = sctx.createLinearGradient(0, oy - bh, 0, oy + bh)
-                bg.addColorStop(0, `rgba(255,255,255,${c.a * 0.75})`)
-                bg.addColorStop(1, `rgba(255,255,255,${c.a * 0.35})`)
-                sctx.fillStyle = bg
-                sctx.beginPath()
-                sctx.roundRect(ox - bw, oy - bh, bw * 2, bh * 2, bh)
-                sctx.fill()
-                // puffs, lit from the top
-                for (const p of c.puffs) {
-                    const x = ox + p.dx / CELL, y = oy + p.dy / CELL, r = p.r / CELL
-                    const g = sctx.createRadialGradient(x - r * 0.15, y - r * 0.35, 0, x, y, r)
-                    g.addColorStop(0, `rgba(255,255,255,${c.a})`)
-                    g.addColorStop(0.6, `rgba(255,255,255,${c.a * 0.8})`)
-                    g.addColorStop(0.93, `rgba(255,255,255,${c.a * 0.55})`)
-                    g.addColorStop(1, 'rgba(255,255,255,0.02)')
-                    sctx.fillStyle = g
-                    sctx.beginPath(); sctx.arc(x, y, r, 0, Math.PI * 2); sctx.fill()
-                }
-                // cut a clean flat underside
-                sctx.globalCompositeOperation = 'destination-out'
-                sctx.fillStyle = '#000'
-                sctx.fillRect(0, oy + bh * 0.6, scratch.width, scratch.height)
-                dctx.drawImage(scratch, 0, 0, cw, ch, c.x / CELL - ox, c.y / CELL - oy, cw, ch)
-            }
+            for (const c of clouds) dctx.drawImage(c.sprite, c.x / CELL - c.ox, c.y / CELL - c.oy)
             const d = dctx.getImageData(0, 0, cols, rows).data
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
             ctx.clearRect(0, 0, W, H)
@@ -149,10 +154,10 @@ export default function Clouds() {
             const s = dt / 1000
             for (const c of clouds) {
                 c.x += c.v * s
-                if (c.x - c.w > W + 60) Object.assign(c, makeCloud(W, H, -c.w * 0.7 - 60))
+                if (c.x - c.w > W + 60) Object.assign(c, bake(makeCloud(W, H, -c.w * 0.7 - 60)))
             }
             acc += dt
-            if (acc < 40) return          // ~25fps is plenty for drifting clouds
+            if (acc < frameGap(40)) return          // ~25fps is plenty for drifting dots
             acc = 0
             draw()
         }
@@ -166,11 +171,11 @@ export default function Clouds() {
         io.observe(canvas)
         const onTheme = () => requestAnimationFrame(() => { readColor(); draw() })
         window.addEventListener('themechange', onTheme)
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        if (!reduce) gsap.ticker.add(loop)
+        const offPerf = onPerfChange(() => { dpr = maxDpr(); canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); draw() })   // sharper→lighter, same clouds
+        if (!reducedMotion()) gsap.ticker.add(loop)
         return () => {
             gsap.ticker.remove(loop)
-            ro.disconnect(); io.disconnect()
+            ro.disconnect(); io.disconnect(); offPerf()
             window.removeEventListener('themechange', onTheme)
         }
     }, [])

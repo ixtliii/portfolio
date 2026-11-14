@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
-import { openContact } from '../../lib/contact'
 import { isSmall } from '../../lib/perf'
 
 // ─────────────────────────────────────────────────────────
@@ -15,8 +14,8 @@ const Arrow = () => (
     <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden><path d="M5 15 15 5M7 5h8v8" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
 )
 
-export default function Words({ words, title, line }) {
-    const cards = [...words, { slot: true }]
+export default function Words({ words, title }) {
+    const cards = words
     const n = cards.length
     const [active, setActive] = useState(0)
     const refs = useRef([])
@@ -34,9 +33,10 @@ export default function Words({ words, title, line }) {
             if (rel > n / 2) rel -= n                       // −1 left, 0 front, +1 right
             const side = Math.sign(rel)
             const spread = small ? 58 : 66                   // % of the card width
+            const shift = n === 2 && !small ? -spread * 0.35 : 0   // two cards on desktop: centre the pair; phones keep the front one centred
             const pose = rel === 0
-                ? { xPercent: -50, x: 0, y: 0, rotate: -2, scale: 1, zIndex: 3 }
-                : { xPercent: -50 + side * spread * Math.abs(rel), x: 0, y: small ? 34 : 46, rotate: side * (small ? 7 : 8), scale: 0.86, zIndex: 3 - Math.abs(rel) }
+                ? { xPercent: -50 + shift, x: 0, y: 0, rotate: -2, scale: 1, zIndex: 3 }
+                : { xPercent: -50 + shift + side * spread * Math.abs(rel), x: 0, y: small ? 34 : 46, rotate: side * (small ? 7 : 8), scale: 0.86, zIndex: 3 - Math.abs(rel) }
             el.style.zIndex = pose.zIndex
             el.classList.toggle('is-front', rel === 0)
             if (first.current) gsap.set(el, { ...pose, transformOrigin: '50% 100%' })
@@ -97,47 +97,25 @@ export default function Words({ words, title, line }) {
                     <article
                         key={i}
                         ref={el => (refs.current[i] = el)}
-                        className={`ab-kw-card${c.slot ? ' ab-kw-card--slot' : ''}`}
+                        className="ab-kw-card"
                         onClick={() => { if (!dragged.current && i !== active) setActive(i) }}
                         tabIndex={i === active ? -1 : 0}
                         onKeyDown={(e) => { if ((e.key === 'Enter' || e.key === ' ') && i !== active) { e.preventDefault(); setActive(i) } }}
-                        aria-label={c.slot ? 'Leave your own words' : `Words from ${c.name}`}
+                        aria-label={`Words from ${c.name}`}
                     >
-                        {c.slot ? (
-                            <>
-                                <div className="ab-kw-head">
-                                    <span className="ab-kw-badge">Open</span>
-                                    <Arrow />
-                                </div>
-                                <p className="ab-kw-quote">Worked with Artem? This spot is yours.</p>
-                                <button type="button" className="ab-kw-btn" onClick={(e) => { e.stopPropagation(); openContact() }}>
-                                    <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden><path d="M10 3.5v13M3.5 10h13" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" /></svg>
-                                    Leave a few words
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <div className="ab-kw-head">
-                                    <span className="ab-kw-mark" aria-hidden>“</span>
-                                    <Arrow />
-                                </div>
-                                <p className="ab-kw-quote ab-kw-quote--full">{c.quote}</p>
-                                <p className="ab-kw-quote ab-kw-quote--short" aria-hidden>{excerpt(c.quote)}</p>
-                                <footer className="ab-kw-by">
-                                    <strong>{c.name}</strong>
-                                    <span>{c.title}</span>
-                                </footer>
-                            </>
-                        )}
+                        <div className="ab-kw-head">
+                            <span className="ab-kw-mark" aria-hidden>“</span>
+                            <Arrow />
+                        </div>
+                        <p className="ab-kw-quote ab-kw-quote--full">{c.quote}</p>
+                        <p className="ab-kw-quote ab-kw-quote--short" aria-hidden>{excerpt(c.quote)}</p>
+                        <footer className="ab-kw-by">
+                            <strong>{c.name}</strong>
+                            <span>{c.title}</span>
+                        </footer>
                     </article>
                 ))}
             </div>
-
-            <p className="ab-kw-line">{line}</p>
-            <button type="button" className="ab-kw-cta" onClick={openContact}>
-                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden><path d="M2.6 9.2 16.4 3c.8-.36 1.6.44 1.24 1.24L11.4 18c-.4.88-1.7.76-1.92-.18l-1.1-4.6a1 1 0 0 0-.74-.74l-4.6-1.1c-.94-.22-1.06-1.52-.18-1.92Z" fill="currentColor" /></svg>
-                Work with me
-            </button>
         </div>
     )
 }

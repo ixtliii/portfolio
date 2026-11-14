@@ -1,4 +1,4 @@
-import { maxDpr } from '../../lib/perf'
+import { maxDpr, isLowPower, onPerfChange } from '../../lib/perf'
 
 // ─────────────────────────────────────────────────────────
 // The intro avatar: a chrome flower that talks with its eyes,
@@ -393,6 +393,8 @@ export function createAvatar(canvas, palette, opts = {}) {
     // autonomous life: blinking and idle glances
     let nextBlink = 1.2, blinkT = -1, nextGlance = 2, glance = { x: 0, y: 0 }
     let last = performance.now() / 1000
+    let tick = 0
+    const offPerf = onPerfChange(() => { sizeDirty = true })   // re-size at the lower pixel ratio
 
     const frame = (now) => {
         const t = now / 1000
@@ -424,6 +426,9 @@ export function createAvatar(canvas, palette, opts = {}) {
         }
 
         if (!onScreen || document.hidden) { raf = requestAnimationFrame(frame); return }
+        // low-power: the state above still moves every frame, but the ray-marched body
+        // is only drawn every other frame (the dithered look hides the lower rate)
+        if (isLowPower() && (++tick & 1)) { raf = requestAnimationFrame(frame); return }
         resize()
         gl.uniform1f(U.uTime, t)
         gl.uniform2f(U.uLook, state.look.x, state.look.y)
@@ -464,7 +469,7 @@ export function createAvatar(canvas, palette, opts = {}) {
         express({ happy = 0, open = 1, tilt = 0 } = {}) { state.happyT = happy; state.openT = open; state.tiltT = tilt },
         destroy() {
             cancelAnimationFrame(raf)
-            ro.disconnect(); io.disconnect()
+            ro.disconnect(); io.disconnect(); offPerf()
             gl.deleteBuffer(buf)
             gl.deleteProgram(prog)
             // (don't lose the context: React may remount on the same canvas)

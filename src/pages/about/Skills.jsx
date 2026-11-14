@@ -59,14 +59,21 @@ export default function Skills({ groups }) {
         const place = () => {
             for (const p of pills) {
                 const { x, y } = p.b.position
-                p.el.style.transform = `translate(${(x - p.w / 2).toFixed(1)}px, ${(y - p.h / 2).toFixed(1)}px) rotate(${p.b.angle.toFixed(3)}rad)`
+                p.el.style.transform = `translate3d(${(x - p.w / 2).toFixed(1)}px, ${(y - p.h / 2).toFixed(1)}px, 0) rotate(${p.b.angle.toFixed(3)}rad)`
             }
         }
         place()
-        let frames = 0
+        // fixed 60Hz physics steps: Matter.js jitters with a variable delta, which is
+        // exactly what slow or uneven frames hand it
+        const STEP = 1000 / 60
+        let frames = 0, simAcc = 0
         const loop = (_t, dt) => {
             if (!visible || !engine.enabled) return
-            Engine.update(engine, Math.min(dt, 33))
+            simAcc += Math.min(dt, 100)
+            let steps = 0
+            while (simAcc >= STEP && steps < 4) { Engine.update(engine, STEP); simAcc -= STEP; steps++ }
+            if (steps === 4) simAcc = 0                 // way behind: drop the backlog instead of spiralling
+            if (!steps) return
             place()
             if (++frames > 90 && pills.every(p => p.b.speed < 0.02 && Math.abs(p.b.angularSpeed) < 0.002)) engine.enabled = false
         }

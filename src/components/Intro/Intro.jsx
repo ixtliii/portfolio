@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
+import { blur } from '../../lib/perf'
 import { createAvatar } from './avatar'
 import { avatarPalette, helperBox } from './avatarColors'
 import './Intro.css'
@@ -125,7 +126,7 @@ export default function Intro({ onExit, onComplete }) {
             // clear the old text with a quick blur-out
             const old = textRef.current.querySelectorAll('span')
             if (old.length) {
-                gsap.to(old, { opacity: 0, filter: 'blur(5px)', y: -4, duration: 0.18, stagger: 0.004, ease: 'power2.in' })
+                gsap.to(old, { opacity: 0, ...blur(5), y: -4, duration: 0.18, stagger: 0.004, ease: 'power2.in' })
                 await wait(0.16)
             }
             if (cancelled) return
@@ -159,7 +160,7 @@ export default function Intro({ onExit, onComplete }) {
                         if (cue.look.x === 0 && cue.look.y === 0) lookHold = null
                     }
                 }
-                gsap.fromTo(spans[i], { opacity: 0, filter: 'blur(6px)', y: 5 }, { opacity: 1, filter: 'blur(0px)', y: 0, duration: 0.32, ease: 'power3.out' })
+                gsap.fromTo(spans[i], { opacity: 0, ...blur(6), y: 5 }, { opacity: 1, ...blur(0), y: 0, duration: 0.32, ease: 'power3.out' })
                 // the eyes "speak": a bounce on each vowel, a little one on other letters
                 if (avatar && ch !== ' ') avatar.syllable(VOWEL.test(ch) ? 0.45 + Math.random() * 0.2 : 0.06)
                 await wait(ch === ' ' ? 2.2 / CPS : /[,.]/.test(ch) ? 4 / CPS : 1 / CPS)

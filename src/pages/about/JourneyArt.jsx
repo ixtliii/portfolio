@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
+import { frameGap, reducedMotion } from '../../lib/perf'
 
 // ─────────────────────────────────────────────────────────
 // Dot-matrix 3D illustrations for the journey cards, in the same
@@ -191,7 +192,7 @@ export default function JourneyArt({ kind, grad }) {
         let visible = false
         const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting })
         io.observe(canvas)
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        const reduce = reducedMotion()
         let acc = 0
         const draw = (time) => {
             m.x += (m.tx - m.x) * 0.06; m.y += (m.ty - m.y) * 0.06
@@ -204,7 +205,7 @@ export default function JourneyArt({ kind, grad }) {
             if (!visible) return
             if (card && parseFloat(card.style.opacity || '1') < 0.05) return   // buried in the stack
             acc += dt
-            if (acc < 33) return            // 30fps is plenty at dot resolution
+            if (acc < frameGap(33)) return  // 30fps is plenty at dot resolution (15 on low-power)
             acc = 0
             draw(time)
         }
