@@ -458,8 +458,8 @@
     position: sticky;
     top: 52px;               /* sits under the name + sun that float over the page */
     z-index: 50;
-    background: color-mix(in srgb, var(--bg) 92%, transparent);
-    backdrop-filter: blur(12px);
+    /* nearly opaque already, so no backdrop blur: blurring under a sticky bar re-renders on every scroll frame */
+    background: color-mix(in srgb, var(--bg) 96%, transparent);
     flex-direction: row;
     align-items: center;
     gap: 4px;

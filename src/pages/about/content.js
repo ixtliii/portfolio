@@ -10,7 +10,6 @@ export const HELLO = {
     first: 'Artem',
     last: 'Diakunchak',
     stickers: ['Product designer', 'Design × code', '2.5+ years shipping', 'Data-heavy products'],
-    line: ['Thinks in systems', 'Builds in code', 'At home in data-heavy products'],
 }
 
 // Selected work on the home page (looked up in src/projects.js by title).
@@ -24,7 +23,7 @@ export const FEATURED = [
 
 // [text, key?] - a key turns the phrase into a chip the mascot can comment on
 export const BIO = [
-    [['Product designer with '], ['2.5+ years', 'Two and a half years of shipping, and counting.'], [' of turning complex, '], ['data-heavy products', 'Dense data, calm screens. My favourite puzzle.'], [' into interfaces that feel clear and calm.']],
+    [['Product designer with '], ['2.5+ years', 'Two and a half years of shipping, and counting.'], [' turning complex, '], ['data-heavy products', 'Dense data, calm screens. My favourite puzzle.'], [' into clear, calm interfaces.']],
     [['Thinking in systems and building in code, I close the gap between '], ['design and engineering', 'Half Figma, half terminal.'], [', so what ships is what was designed: a '], ['50+ component design system', 'Fifty-plus components. I counted.'], [', an app redesign live in '], ['60+ regions', 'One redesign, sixty-plus regions.'], [', a real-time street installation.']],
 ]
 
@@ -41,7 +40,6 @@ export const SKILLS = [
 ]
 
 export const WORDS_TITLE = ["People I've", 'worked with']
-export const WORDS_LINE = "Kind words from the founders and developers I've built products with."
 
 export const WORDS = [
     {

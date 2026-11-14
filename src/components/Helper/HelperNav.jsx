@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
+import { blur } from '../../lib/perf'
 
 /* ─────────────────────────────────────────────────────────
    The helper's menu, in the old navbar's language: a panel
@@ -64,8 +65,8 @@ export default function HelperNav({ groups, onRun }) {
     useLayoutEffect(() => {
         const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         if (reduce) return
-        gsap.fromTo(navRef.current, { scaleY: 0.2, scaleX: 0.6, opacity: 0, filter: 'blur(6px)' },
-            { scaleY: 1, scaleX: 1, opacity: 1, filter: 'blur(0px)', duration: 0.75, ease: 'elastic.out(1, 0.6)', transformOrigin: '80% 100%' })
+        gsap.fromTo(navRef.current, { scaleY: 0.2, scaleX: 0.6, opacity: 0, ...blur(6) },
+            { scaleY: 1, scaleX: 1, opacity: 1, ...blur(0), duration: 0.75, ease: 'elastic.out(1, 0.6)', transformOrigin: '80% 100%' })
     }, [])
 
     useLayoutEffect(() => {
@@ -111,8 +112,8 @@ export default function HelperNav({ groups, onRun }) {
             else tl.to(el, { opacity: 1, scale: 1, duration: k === from ? 0.5 : 0.25, ease: k === from ? 'elastic.out(1, 0.6)' : 'power2.out' }, k === from ? 0.15 : 0)
         })
         if (labelRef.current) {
-            tl.fromTo(labelRef.current, { yPercent: 70 * dir, opacity: 0, filter: 'blur(4px)' },
-                { yPercent: 0, opacity: 1, filter: 'blur(0px)', duration: 0.38, ease: 'expo.out', immediateRender: false }, 0.04)
+            tl.fromTo(labelRef.current, { yPercent: 70 * dir, opacity: 0, ...blur(4) },
+                { yPercent: 0, opacity: 1, ...blur(0), duration: 0.38, ease: 'expo.out', immediateRender: false }, 0.04)
         }
         return () => tl.kill()
     }, [a, n]) // eslint-disable-line react-hooks/exhaustive-deps

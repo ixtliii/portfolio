@@ -166,8 +166,19 @@ export default function Archive() {
         const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting }, { rootMargin: '100px' })
         io.observe(sectionRef.current)
 
-        const ro = new ResizeObserver(() => scene.resize())
+        // sizes the loop needs, measured when they change instead of every frame
+        // (reading layout right after writing styles forces a reflow per frame)
+        const size = { vw: stage.clientWidth, endW: endRef.current?.offsetWidth || 0, endH: endRef.current?.offsetHeight || 0, nameH: 0 }
+        const ro = new ResizeObserver(() => {
+            scene.resize()
+            size.vw = stage.clientWidth
+            if (endRef.current) { size.endW = endRef.current.offsetWidth; size.endH = endRef.current.offsetHeight }
+            if (nameRef.current) size.nameH = nameRef.current.offsetHeight
+        })
         ro.observe(stage)
+        if (endRef.current) ro.observe(endRef.current)
+        // style writes are skipped when nothing changed
+        const last = { nameO: '', nameT: '', endO: '', endT: '' }
 
         // frame-time watch: if frames keep running long, render at a lower resolution
         const perf = { sum: 0, n: 0, cooldown: 0 }
@@ -239,24 +250,26 @@ export default function Archive() {
                         tags.appendChild(s)
                     })
                     el.append(title, tags)
+                    size.nameH = el.offsetHeight            // once per project, not per frame
                 }
                 const o = Math.max(0, Math.min(1, (lab.e - 0.7) / 0.3))
-                el.style.opacity = o.toFixed(3)
-                el.style.transform = `translate(${lab.x.toFixed(1)}px, ${(lab.y + 18).toFixed(1)}px) translate(-50%, 0) translateY(${((1 - o) * 6).toFixed(1)}px)`
-                el.style.filter = o < 1 ? `blur(${((1 - o) * 4).toFixed(1)}px)` : 'none'
+                const nO = o.toFixed(3)
+                const nT = `translate3d(${lab.x.toFixed(1)}px, ${(lab.y + 18 + (1 - o) * 6).toFixed(1)}px, 0) translateX(-50%)`
+                if (nO !== last.nameO) { el.style.opacity = nO; last.nameO = nO }
+                if (nT !== last.nameT) { el.style.transform = nT; last.nameT = nT }
 
                 // end of the archive: an invitation docks beside the last block
                 // (or under its name when there's no room, on phones)
                 const end = endRef.current
                 if (end) {
                     const oe = lab.index === n - 1 ? Math.max(0, Math.min(1, (lab.e - 0.85) / 0.15)) : 0
-                    const vw = stage.clientWidth
-                    const side = lab.rx + 36 + end.offsetWidth < vw - 24
-                    const x = side ? lab.rx + 36 : lab.x - end.offsetWidth / 2
-                    const y = side ? lab.ry - end.offsetHeight / 2 : lab.y + 18 + el.offsetHeight + 28
-                    end.style.opacity = oe.toFixed(3)
-                    end.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translateX(${((1 - oe) * (side ? -14 : 0)).toFixed(1)}px) translateY(${((1 - oe) * (side ? 0 : 10)).toFixed(1)}px)`
-                    end.style.filter = oe < 1 ? `blur(${((1 - oe) * 5).toFixed(1)}px)` : 'none'
+                    const side = lab.rx + 36 + size.endW < size.vw - 24
+                    const x = (side ? lab.rx + 36 : lab.x - size.endW / 2) + (1 - oe) * (side ? -14 : 0)
+                    const y = (side ? lab.ry - size.endH / 2 : lab.y + 18 + size.nameH + 28) + (1 - oe) * (side ? 0 : 10)
+                    const eO = oe.toFixed(3)
+                    const eT = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`
+                    if (eO !== last.endO) { end.style.opacity = eO; last.endO = eO }
+                    if (eT !== last.endT && oe > 0) { end.style.transform = eT; last.endT = eT }
                     const on = oe > 0.6
                     if (end.classList.contains('is-on') !== on) {
                         end.classList.toggle('is-on', on)

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { gsap } from 'gsap'
+import { maxDpr, reducedMotion } from '../../lib/perf'
 import './PageTransition.css'
 
 /* ─────────────────────────────────────────────────────────
@@ -38,7 +39,7 @@ export default function PageTransition() {
 
     const build = () => {
         const c = canvasRef.current
-        const dpr = Math.min(window.devicePixelRatio || 1, 2)
+        const dpr = maxDpr()
         const w = window.innerWidth, h = window.innerHeight
         c.width = Math.round(w * dpr); c.height = Math.round(h * dpr)
         c.style.width = w + 'px'; c.style.height = h + 'px'
@@ -50,14 +51,15 @@ export default function PageTransition() {
             const d = Math.hypot(cols - x, rows - y) / maxD
             thr[y * cols + x] = d * 0.8 + bayer8(x & 7, y & 7) * 0.16 + Math.random() * 0.04
         }
-        grid.current = { cols, rows, thr, dpr }
+        // colours are read once per transition, not on every frame (getComputedStyle forces a style pass)
+        grid.current = { cols, rows, thr, dpr, bg: css('--sh-bg-b', '#e4e4e7'), ink: css('--sh-icon', '#85858b'), ctx: c.getContext('2d') }
     }
 
     // p 0…1.1; cover: cells below p are filled; reveal: cells above p stay filled
     const draw = (p, mode) => {
         const c = canvasRef.current, g = grid.current
         if (!c || !g) return
-        const ctx = c.getContext('2d')
+        const ctx = g.ctx
         const s = CELL * g.dpr
         ctx.clearRect(0, 0, c.width, c.height)
         const fill = new Path2D(), front = new Path2D()
@@ -72,9 +74,9 @@ export default function PageTransition() {
             path.moveTo(x + s / 2 + r, y + s / 2)
             path.arc(x + s / 2, y + s / 2, r, 0, Math.PI * 2)
         }
-        ctx.fillStyle = css('--sh-bg-b', '#e4e4e7')
+        ctx.fillStyle = g.bg
         ctx.fill(fill)
-        ctx.fillStyle = css('--sh-icon', '#85858b')
+        ctx.fillStyle = g.ink
         ctx.fill(front)
     }
 
@@ -85,6 +87,7 @@ export default function PageTransition() {
     const reveal = async () => {
         const c = canvasRef.current
         const st = { p: 0 }
+        if (grid.current) { grid.current.bg = css('--sh-bg-b', '#e4e4e7'); grid.current.ink = css('--sh-icon', '#85858b') }   // the theme may have flipped
         c.style.visibility = 'visible'
         draw(0, 'reveal')
         await new Promise(r => setTimeout(r, 220))           // let the new page lay out
@@ -100,7 +103,7 @@ export default function PageTransition() {
         const onGo = async (e) => {
             const path = e.detail?.path
             if (!path || busy.current) return
-            const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            const reduce = reducedMotion()
             if (reduce) { navigate(path); return }
             busy.current = true
             ours.current = true
@@ -118,7 +121,7 @@ export default function PageTransition() {
     // route changed: reveal (also for back/forward, which skip the cover)
     useEffect(() => {
         if (first.current) { first.current = false; return }
-        if (!ours.current && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+        if (!ours.current && reducedMotion()) return
         ours.current = false
         busy.current = true
         reveal()

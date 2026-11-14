@@ -16,6 +16,8 @@ import './lib/theme'
 import './lib/palette'
 
 gsap.registerPlugin(ScrollTrigger)
+// phones: the browser bar showing/hiding shouldn't re-measure every trigger mid-scroll
+ScrollTrigger.config({ ignoreMobileResize: true })
 
 function ScrollToTop() {
     const { pathname } = useLocation()
